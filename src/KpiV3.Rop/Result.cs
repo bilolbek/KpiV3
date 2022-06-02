@@ -183,6 +183,19 @@ public readonly struct Result<TFailure>
     [MemberNotNullWhen(false, nameof(_failure))]
     public bool IsSuccess => !IsFailure;
 
+    public TFailure Failure
+    {
+        get
+        {
+            if (!IsFailure)
+            {
+                throw new InvalidOperationException("Trying access Failure property while result is Succeed");
+            }
+
+            return _failure;
+        }
+    }
+
     public T Match<T>(Func<T> onSuccess, Func<TFailure, T> onFailure)
     {
         return IsSuccess ? onSuccess() : onFailure(_failure);

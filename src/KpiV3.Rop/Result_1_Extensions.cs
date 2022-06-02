@@ -198,4 +198,31 @@ public static class Result_1_Extensions
 
         return result.BindFailure(binder);
     }
+
+    public static async Task<Result<T>> TeeAsync<T>(
+        this Result<T> result,
+        Func<Task> onSuccess)
+    {
+        await result.Match(() => onSuccess(), _ => Task.CompletedTask);
+
+        return result;
+    }
+
+    public static async Task<Result<T>> TeeAsync<T>(
+        this Task<Result<T>> task,
+        Func<Task> onSuccess)
+    {
+        var result = await task;
+
+        return await result.TeeAsync(onSuccess);
+    }
+
+    public static async Task<Result<T>> TeeAsync<T>(
+        this Task<Result<T>> task,
+        Action onSuccess)
+    {
+        var result = await task;
+
+        return result.Tee(onSuccess);
+    }
 }

@@ -1,0 +1,48 @@
+version: '3.4'
+
+services:
+  kpiv3.webapi:
+    image: ${DOCKER_REGISTRY-}kpiv3webapi
+
+    build:
+      context: .
+      dockerfile: src/KpiV3.WebApi/Dockerfile
+
+    environment:
+      - ConnectionStrings__Default=Host=database;Port=5432;Database=kpi_db;UserName=kpi_user;Password=kpi_pass
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      
+    ports:
+      - 5000:5000
+
+    depends_on:
+      - database
+
+  database:
+    image: postgres
+
+    ports:
+      - 5432:5432
+
+    volumes:
+      - database.volume:/var/lib/postgresql/data
+
+    environment:
+      - POSTGRES_USER=kpi_user
+      - POSTGRES_PASSWORD=kpi_pass
+      - POSTGRES_DB=kpi_db
+
+  flyway:
+    image: flyway/flyway
+
+    command: -url=jdbc:postgresql://database/kpi_db -user=kpi_user -password=kpi_pass -connectRetries=10 migrate
+
+    volumes:
+      - ./src/flyway/:/flyway/sql 
+
+    depends_on:
+      - database
+
+volumes:
+  database.volume:

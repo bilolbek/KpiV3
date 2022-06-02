@@ -7,25 +7,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DAE78F71-652
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{EC23C187-647D-49D2-9C24-17833D0E4936}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KpiV3.Domain", "src\KpiV3.Domain\KpiV3.Domain.csproj", "{13E1974A-FB5A-42F5-91B6-48E37912D7A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KpiV3.Domain", "src\KpiV3.Domain\KpiV3.Domain.csproj", "{13E1974A-FB5A-42F5-91B6-48E37912D7A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KpiV3.Infrastructure", "src\KpiV3.Infrastructure\KpiV3.Infrastructure.csproj", "{CC789D88-2453-4C50-BDD0-06F704921D67}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KpiV3.Infrastructure", "src\KpiV3.Infrastructure\KpiV3.Infrastructure.csproj", "{CC789D88-2453-4C50-BDD0-06F704921D67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KpiV3.WebApi", "src\KpiV3.WebApi\KpiV3.WebApi.csproj", "{8A8E9A6D-71D6-46AA-9C0C-5FDE49DDBAEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KpiV3.WebApi", "src\KpiV3.WebApi\KpiV3.WebApi.csproj", "{8A8E9A6D-71D6-46AA-9C0C-5FDE49DDBAEC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KpiV3.Domain.UnitTests", "tests\KpiV3.Domain.UnitTests\KpiV3.Domain.UnitTests.csproj", "{7F486C81-2910-4739-BB47-10CBAD5ABDAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KpiV3.Domain.UnitTests", "tests\KpiV3.Domain.UnitTests\KpiV3.Domain.UnitTests.csproj", "{7F486C81-2910-4739-BB47-10CBAD5ABDAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KpiV3.WebApi.UnitTests", "tests\KpiV3.WebApi.UnitTests\KpiV3.WebApi.UnitTests.csproj", "{5613F440-11D4-40D6-ACB4-EB53448B3385}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KpiV3.WebApi.UnitTests", "tests\KpiV3.WebApi.UnitTests\KpiV3.WebApi.UnitTests.csproj", "{5613F440-11D4-40D6-ACB4-EB53448B3385}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KpiV3.Rop", "src\KpiV3.Rop\KpiV3.Rop.csproj", "{5E0A8023-F65B-41C8-95FA-153536CD0BD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KpiV3.Rop", "src\KpiV3.Rop\KpiV3.Rop.csproj", "{5E0A8023-F65B-41C8-95FA-153536CD0BD2}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{53F996CD-B826-4B0E-96D7-B15103CA3E9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KpiV3.FunctionalTests", "tests\KpiV3.FunctionalTests\KpiV3.FunctionalTests.csproj", "{7B6A3CAB-EFA2-416F-B021-E288A03C979E}"
 EndProject
 Global
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {FC646C3A-CC59-47E5-9CFE-145C5F02A7C5}
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
@@ -107,6 +105,33 @@ Global
 		{5E0A8023-F65B-41C8-95FA-153536CD0BD2}.Release|x64.Build.0 = Release|Any CPU
 		{5E0A8023-F65B-41C8-95FA-153536CD0BD2}.Release|x86.ActiveCfg = Release|Any CPU
 		{5E0A8023-F65B-41C8-95FA-153536CD0BD2}.Release|x86.Build.0 = Release|Any CPU
+		{53F996CD-B826-4B0E-96D7-B15103CA3E9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53F996CD-B826-4B0E-96D7-B15103CA3E9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53F996CD-B826-4B0E-96D7-B15103CA3E9F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{53F996CD-B826-4B0E-96D7-B15103CA3E9F}.Debug|x64.Build.0 = Debug|Any CPU
+		{53F996CD-B826-4B0E-96D7-B15103CA3E9F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{53F996CD-B826-4B0E-96D7-B15103CA3E9F}.Debug|x86.Build.0 = Debug|Any CPU
+		{53F996CD-B826-4B0E-96D7-B15103CA3E9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53F996CD-B826-4B0E-96D7-B15103CA3E9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53F996CD-B826-4B0E-96D7-B15103CA3E9F}.Release|x64.ActiveCfg = Release|Any CPU
+		{53F996CD-B826-4B0E-96D7-B15103CA3E9F}.Release|x64.Build.0 = Release|Any CPU
+		{53F996CD-B826-4B0E-96D7-B15103CA3E9F}.Release|x86.ActiveCfg = Release|Any CPU
+		{53F996CD-B826-4B0E-96D7-B15103CA3E9F}.Release|x86.Build.0 = Release|Any CPU
+		{7B6A3CAB-EFA2-416F-B021-E288A03C979E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B6A3CAB-EFA2-416F-B021-E288A03C979E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B6A3CAB-EFA2-416F-B021-E288A03C979E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7B6A3CAB-EFA2-416F-B021-E288A03C979E}.Debug|x64.Build.0 = Debug|Any CPU
+		{7B6A3CAB-EFA2-416F-B021-E288A03C979E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7B6A3CAB-EFA2-416F-B021-E288A03C979E}.Debug|x86.Build.0 = Debug|Any CPU
+		{7B6A3CAB-EFA2-416F-B021-E288A03C979E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B6A3CAB-EFA2-416F-B021-E288A03C979E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B6A3CAB-EFA2-416F-B021-E288A03C979E}.Release|x64.ActiveCfg = Release|Any CPU
+		{7B6A3CAB-EFA2-416F-B021-E288A03C979E}.Release|x64.Build.0 = Release|Any CPU
+		{7B6A3CAB-EFA2-416F-B021-E288A03C979E}.Release|x86.ActiveCfg = Release|Any CPU
+		{7B6A3CAB-EFA2-416F-B021-E288A03C979E}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{13E1974A-FB5A-42F5-91B6-48E37912D7A3} = {DAE78F71-6526-4D32-AD8B-D8575FBDA1D9}
@@ -115,5 +140,9 @@ Global
 		{7F486C81-2910-4739-BB47-10CBAD5ABDAA} = {EC23C187-647D-49D2-9C24-17833D0E4936}
 		{5613F440-11D4-40D6-ACB4-EB53448B3385} = {EC23C187-647D-49D2-9C24-17833D0E4936}
 		{5E0A8023-F65B-41C8-95FA-153536CD0BD2} = {DAE78F71-6526-4D32-AD8B-D8575FBDA1D9}
+		{7B6A3CAB-EFA2-416F-B021-E288A03C979E} = {EC23C187-647D-49D2-9C24-17833D0E4936}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FC646C3A-CC59-47E5-9CFE-145C5F02A7C5}
 	EndGlobalSection
 EndGlobal
