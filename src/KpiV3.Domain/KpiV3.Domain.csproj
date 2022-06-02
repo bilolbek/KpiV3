@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\KpiV3.Rop\KpiV3.Rop.csproj" />
+  </ItemGroup>
+
 </Project>
