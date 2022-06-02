@@ -22,10 +22,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Responses\" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Using Include="KpiV3.Rop" />
 		<Using Include="KpiV3.Domain.DataContracts.Errors" />
 	</ItemGroup>
