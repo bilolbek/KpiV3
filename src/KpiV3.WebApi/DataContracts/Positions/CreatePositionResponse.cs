@@ -2,7 +2,7 @@
 
 namespace KpiV3.WebApi.DataContracts.Positions;
 
-public class CreatePositionResponse
+public record CreatePositionResponse
 {
     public CreatePositionResponse()
     {

@@ -11,9 +11,12 @@
 
 	<ItemGroup>
 		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.5" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
+		<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.18.0" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.18.0" />
 	</ItemGroup>
 
 	<ItemGroup>

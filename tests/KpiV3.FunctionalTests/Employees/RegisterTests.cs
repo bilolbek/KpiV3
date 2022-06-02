@@ -1,6 +1,5 @@
 ﻿using KpiV3.Domain.Employees.Ports;
 using KpiV3.WebApi.DataContracts.Employees;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
@@ -10,7 +9,7 @@ using KpiV3.Domain.Employees.DataContracts;
 
 namespace KpiV3.FunctionalTests.Employees;
 
-public class RegisterTests
+public class RegisterTests : TestBase
 {
     private readonly Mock<IEmployeeRepository> _employeeRepository = new();
 
@@ -67,14 +66,20 @@ public class RegisterTests
 
     private HttpClient CreateClient()
     {
-        var application = new WebApplicationFactory<Program>().WithWebHostBuilder(host =>
+        Requestor = new Employee
         {
-            host.ConfigureServices((host, services) =>
-            {
-                services.Replace(ServiceDescriptor.Transient(_ => _employeeRepository.Object));
-            });
-        });
+            Id = new("075bcdf4-0457-4d7b-a9d5-a2b8d3ef7deb")
+        };
 
-        return application.CreateClient();
+        RequestorPosition = new Position
+        {
+            Id = new("96c06b84-f752-4cf3-b729-ce5399af6434"),
+            Name = "Admin"
+        };
+
+        return Authorize(CreateClient((env, services) =>
+        {
+            services.Replace(ServiceDescriptor.Transient(_ => _employeeRepository.Object));
+        }));
     }
 }

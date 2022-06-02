@@ -1,10 +1,12 @@
 ﻿using KpiV3.WebApi.DataContracts.Employees;
 using KpiV3.WebApi.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KpiV3.WebApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("3.0")]
@@ -20,7 +22,7 @@ public class EmployeeController : ControllerBase
     [HttpPost]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> Register([FromBody] RegisterEmployeeRequest request)
+    public async Task<IActionResult> RegisterAsync([FromBody] RegisterEmployeeRequest request)
     {
         return await _mediator
             .Send(request.ToCommand())

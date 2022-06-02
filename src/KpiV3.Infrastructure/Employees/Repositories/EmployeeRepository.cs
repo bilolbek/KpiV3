@@ -14,6 +14,15 @@ internal class EmployeeRepository : IEmployeeRepository
         _db = db;
     }
 
+    public async Task<Result<Employee, IError>> FindByEmailAsync(string email)
+    {
+        const string sql = @"SELECT * FROM employees WHERE email = @email";
+
+        return await _db
+            .QueryFirstAsync<EmployeeRow>(new(sql, new { email }))
+            .MapAsync(row => row.ToModel());
+    }
+
     public async Task<Result<IError>> InsertAsync(Employee employee)
     {
         const string sql = @"

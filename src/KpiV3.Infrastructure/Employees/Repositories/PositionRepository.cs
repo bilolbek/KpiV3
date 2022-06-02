@@ -14,6 +14,15 @@ internal class PositionRepository : IPositionRepository
         _db = db;
     }
 
+    public async Task<Result<Position, IError>> FindByIdAsync(Guid positionId)
+    {
+        const string sql = @"SELECT * FROM positions WHERE id = @positionId";
+
+        return await _db
+            .QueryFirstAsync<PositionRow>(new(sql, new { positionId }))
+            .MapAsync(row => row.ToModel());
+    }
+
     public async Task<Result<IError>> InsertAsync(Position position)
     {
         const string sql = @"

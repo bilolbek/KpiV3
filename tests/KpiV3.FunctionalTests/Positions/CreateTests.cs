@@ -2,7 +2,6 @@
 using KpiV3.Domain.Employees.DataContracts;
 using KpiV3.Domain.Employees.Ports;
 using KpiV3.WebApi.DataContracts.Positions;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
@@ -10,7 +9,7 @@ using System.Net.Http.Json;
 
 namespace KpiV3.FunctionalTests.Positions;
 
-public class CreateTests
+public class CreateTests : TestBase
 {
     private readonly Mock<IPositionRepository> _positionRepository = new();
 
@@ -60,14 +59,20 @@ public class CreateTests
 
     private HttpClient CreateClient()
     {
-        var application = new WebApplicationFactory<Program>().WithWebHostBuilder(host =>
+        Requestor = new Employee
         {
-            host.ConfigureServices((host, services) =>
-            {
-                services.Replace(ServiceDescriptor.Transient(_ => _positionRepository.Object));
-            });
-        });
+            Id = new("075bcdf4-0457-4d7b-a9d5-a2b8d3ef7deb")
+        };
 
-        return application.CreateClient();
+        RequestorPosition = new Position
+        {
+            Id = new("96c06b84-f752-4cf3-b729-ce5399af6434"),
+            Name = "Admin"
+        };
+
+        return Authorize(CreateClient((env, services) =>
+        {
+            services.Replace(ServiceDescriptor.Transient(_ => _positionRepository.Object));
+        }));
     }
 }
