@@ -36,6 +36,46 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Import from CSV",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6IkpXVCJ9.eyJzdWIiOiJlN2M1MDNiZi1jOTU3LTQ3ZTEtOWQ1Mi1hZjhlNWRiNGJlMDQiLCJwb3NJZCI6IjNlYTAyMzZiLWQzYTktNGQxMi04ODY0LTVjNTc4NzBmZTEyMSIsInBvc05hbWUiOiJBZG1pbiIsInBvc1R5cGUiOiJSb290IiwiZmlyc3ROYW1lIjoiQWRtaW4iLCJsYXN0TmFtZSI6IkFkbWlub3ZpY2giLCJhdWQiOiJLcGkiLCJleHAiOjE2NTQyNzYyMjUsImlzcyI6IktwaSIsImlhdCI6MTY1NDI3MjYyNSwibmJmIjoxNjU0MjcyNjI1fQ.rU_RDiEHC5h0WCWzz1RQhVvex20bcUkvVftg_rQ9js8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Develop/KpiV3/tests/PostmanTests/employees.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/api/{{version}}/employee/import",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"employee",
+								"import"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -78,6 +118,39 @@
 								"api",
 								"{{version}}",
 								"position"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Create JWT Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"admin@kpi.com\",\r\n    \"password\": \"ht230p5j\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/{{version}}/token",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"token"
 							]
 						}
 					},
