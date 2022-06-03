@@ -1,6 +1,7 @@
 using KpiV3.Domain;
 using KpiV3.Infrastructure;
 using KpiV3.WebApi.Authentication.Extensions;
+using KpiV3.WebApi.HostedServices.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -20,12 +21,17 @@ services.AddApiVersioning(o =>
     o.ReportApiVersions = true;
     o.ApiVersionReader = new UrlSegmentApiVersionReader();
 });
+services.AddAuthorization(options =>
+{
+    options.AddPolicy("RootOnly",
+        policy => policy.RequireClaim("posType", "Root"));
+});
 
-services.AddAdapters(configuration, builder.Environment);
-
-services.AddMediatR(DomainAssembly.Instance, InfrastructureAssembly.Instance);
-
-services.AddJwt(configuration);
+services
+    .AddAdapters(configuration, builder.Environment)
+    .AddMediatR(DomainAssembly.Instance, InfrastructureAssembly.Instance)
+    .AddJwt(configuration)
+    .AddHostedServices(configuration);
 
 var app = builder.Build();
 

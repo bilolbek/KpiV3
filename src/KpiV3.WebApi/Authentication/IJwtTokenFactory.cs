@@ -1,8 +1,9 @@
-﻿using KpiV3.WebApi.Authentication.DataContracts;
+﻿using KpiV3.Domain.Employees.DataContracts;
+using KpiV3.WebApi.Authentication.DataContracts;
 
 namespace KpiV3.WebApi.Authentication;
 
 public interface IJwtTokenFactory
 {
-    Task<Result<JwtToken, IError>> CreateToken(Credentials credentials);
+    JwtToken CreateToken(Employee employee, Position position);
 }

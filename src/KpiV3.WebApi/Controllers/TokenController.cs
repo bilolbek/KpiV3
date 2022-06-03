@@ -9,17 +9,17 @@ namespace KpiV3.WebApi.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 public class TokenController : ControllerBase
 {
-    private readonly IJwtTokenFactory _jwtTokenFactory;
+    private readonly IJwtTokenProvider _tokenProvider;
 
-    public TokenController(IJwtTokenFactory jwtTokenFactory)
+    public TokenController(IJwtTokenProvider tokenProvider)
     {
-        _jwtTokenFactory = jwtTokenFactory;
+        _tokenProvider = tokenProvider;
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] Credentials credentials)
     {
-        return await _jwtTokenFactory
+        return await _tokenProvider
             .CreateToken(credentials)
             .MatchAsync(token => Ok(token), error => error.MapToActionResult());
     }

@@ -7,7 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
-namespace KpiV3.WebApi.UnitTests;
+namespace KpiV3.WebApi.UnitTests.Controllers.Positions;
 
 public class PositionController_CreateTests
 {
@@ -67,8 +67,8 @@ public class PositionController_CreateTests
 
         // Assert
         _mediator.Verify(m => m.Send(
-            It.Is<CreatePositionCommand>(command => 
-                command.Name == request.Name), 
+            It.Is<CreatePositionCommand>(command =>
+                command.Name == request.Name),
             default));
     }
 

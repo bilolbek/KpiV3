@@ -1,28 +1,21 @@
 ﻿using FluentAssertions;
-using KpiV3.Domain.Employees.DataContracts;
 using KpiV3.WebApi.Authentication;
 using KpiV3.WebApi.Authentication.DataContracts;
 using KpiV3.WebApi.Controllers;
-using KpiV3.WebApi.DataContracts.Positions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace KpiV3.WebApi.UnitTests;
+namespace KpiV3.WebApi.UnitTests.Controllers;
 
 public class TokenControllerTests
 {
-    private readonly Mock<IJwtTokenFactory> _tokenFactory = new();
+    private readonly Mock<IJwtTokenProvider> _tokenProvider = new();
 
     [Fact]
     public async Task Returns_ok_object_result_when_token_factory_returns_token()
     {
         // Arrange
-        var controller = new TokenController(_tokenFactory.Object);
+        var controller = new TokenController(_tokenProvider.Object);
 
         var credentials = new Credentials
         {
@@ -35,7 +28,7 @@ public class TokenControllerTests
             AccessToken = "TOKEN"
         };
 
-        _tokenFactory
+        _tokenProvider
             .Setup(t => t.CreateToken(It.IsAny<Credentials>()))
             .ReturnsAsync(Result<JwtToken, IError>.Ok(token));
 
@@ -53,7 +46,7 @@ public class TokenControllerTests
     public async Task Sends_credentials_to_token_factory()
     {
         // Arrange
-        var controller = new TokenController(_tokenFactory.Object);
+        var controller = new TokenController(_tokenProvider.Object);
 
         var credentials = new Credentials
         {
@@ -66,7 +59,7 @@ public class TokenControllerTests
             AccessToken = "TOKEN"
         };
 
-        _tokenFactory
+        _tokenProvider
             .Setup(t => t.CreateToken(credentials))
             .ReturnsAsync(Result<JwtToken, IError>.Ok(token));
 
@@ -74,7 +67,7 @@ public class TokenControllerTests
         var response = await controller.CreateAsync(credentials);
 
         // Assert
-        _tokenFactory
+        _tokenProvider
             .Verify(t => t.CreateToken(credentials));
     }
 }

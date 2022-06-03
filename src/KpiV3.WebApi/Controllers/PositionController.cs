@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KpiV3.WebApi.Controllers;
 
-[Authorize]
+[Authorize(Policy = "RootOnly")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("3.0")]

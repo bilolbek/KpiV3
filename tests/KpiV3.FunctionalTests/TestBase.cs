@@ -1,9 +1,13 @@
 ﻿using KpiV3.Domain.Employees.DataContracts;
+using KpiV3.Infrastructure.Adapters;
 using KpiV3.WebApi.Authentication;
+using KpiV3.WebApi.HostedServices.DataInitialization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Net.Http.Headers;
@@ -32,42 +36,15 @@ public abstract class TestBase
             throw new InvalidOperationException("Must set Requestor and his position to authorize client");
         }
 
-        var token = IssueToken(Requestor, RequestorPosition);
+        var jwtFactory = new JwtTokenFactory(
+            new DateProvider(),
+            Options.Create(Jwt));
 
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var token = jwtFactory.CreateToken(Requestor, RequestorPosition);
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
 
         return client;
-    }
-
-    private string IssueToken(Employee employee, Position position)
-    {
-        var handler = new JsonWebTokenHandler();
-
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Issuer = Jwt.Issuer,
-            Audience = Jwt.Audience,
-            IssuedAt = JwtIssueTime.UtcDateTime,
-            Expires = JwtIssueTime.Add(Jwt.TokenLifetime).UtcDateTime,
-            Claims = new Dictionary<string, object>
-            {
-                { "sub", employee.Id.ToString() },
-                { "posId", position.Id.ToString() },
-                { "posName", position.Name },
-                { "firstName", employee.Name.FirstName },
-                { "lastName", employee.Name.LastName },
-            },
-            SigningCredentials = new SigningCredentials(
-                Jwt.GetSymmetricSecurityKey(),
-                SecurityAlgorithms.HmacSha256),
-        };
-
-        if (employee.Name.MiddleName is not null)
-        {
-            tokenDescriptor.Claims["middleName"] = employee.Name.MiddleName;
-        }
-
-        return handler.CreateToken(tokenDescriptor);
     }
 
     protected HttpClient CreateClient(Action<IWebHostEnvironment, IServiceCollection> configure)
@@ -76,6 +53,9 @@ public abstract class TestBase
         {
             host.ConfigureServices((context, services) =>
             {
+                services.Remove(services.First(d => d.ImplementationType == typeof(DataInitializationService)));
+
+
                 configure(context.HostingEnvironment, services);
             });
 

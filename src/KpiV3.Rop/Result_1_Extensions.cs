@@ -225,4 +225,32 @@ public static class Result_1_Extensions
 
         return result.Tee(onSuccess);
     }
+
+
+    public static async Task<Result<T>> TeeFailureAsync<T>(
+        this Result<T> result,
+        Func<T, Task> onFailure)
+    {
+        await result.Match(() => Task.CompletedTask, onFailure);
+
+        return result;
+    }
+
+    public static async Task<Result<T>> TeeFailureAsync<T>(
+        this Task<Result<T>> task,
+        Func<T, Task> onFailure)
+    {
+        var result = await task;
+
+        return await result.TeeFailureAsync(onFailure);
+    }
+
+    public static async Task<Result<T>> TeeFailureAsync<T>(
+        this Task<Result<T>> task,
+        Action<T> onFailure)
+    {
+        var result = await task;
+
+        return result.TeeFailure(onFailure);
+    }
 }

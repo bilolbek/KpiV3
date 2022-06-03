@@ -74,7 +74,8 @@ public class RegisterTests : TestBase
         RequestorPosition = new Position
         {
             Id = new("96c06b84-f752-4cf3-b729-ce5399af6434"),
-            Name = "Admin"
+            Name = "Admin",
+            Type = PositionType.Root,
         };
 
         return Authorize(CreateClient((env, services) =>

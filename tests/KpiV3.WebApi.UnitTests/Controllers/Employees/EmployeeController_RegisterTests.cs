@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
-namespace KpiV3.WebApi.UnitTests;
+namespace KpiV3.WebApi.UnitTests.Controllers.Employees;
 
 public class EmployeeController_RegisterTests
 {

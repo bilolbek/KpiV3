@@ -26,8 +26,8 @@ internal class EmployeeRepository : IEmployeeRepository
     public async Task<Result<IError>> InsertAsync(Employee employee)
     {
         const string sql = @"
-INSERT INTO employees(id, email, first_name, last_name, middle_name, position_id, reg_date)
-VALUES (@Id, @Email, @FirstName, @LastName, @MiddleName, @PositionId, @RegDate)";
+INSERT INTO employees(id, email, first_name, last_name, middle_name, position_id, reg_date, password_hash)
+VALUES (@Id, @Email, @FirstName, @LastName, @MiddleName, @PositionId, @RegDate, @PasswordHash)";
 
         return await _db.ExecuteAsync(new(sql, new EmployeeRow(employee)));
     }

@@ -37,6 +37,7 @@ public static class DependencyInjectionExtensions
             .Configure<JwtOptions>(configuration.GetSection("Jwt"))
             .AddTransient<IValidateOptions<JwtOptions>, JwtOptionsValidator>()
             .AddTransient<IEmployeeAccessor, HttpContextEmployeeAccessor>()
-            .AddTransient<IJwtTokenFactory, JwtTokenFactory>();
+            .AddTransient<IJwtTokenFactory, JwtTokenFactory>()
+            .AddTransient<IJwtTokenProvider, JwtTokenProvider>();
     }
 }

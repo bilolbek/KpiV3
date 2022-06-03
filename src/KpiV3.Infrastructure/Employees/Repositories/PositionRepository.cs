@@ -23,11 +23,20 @@ internal class PositionRepository : IPositionRepository
             .MapAsync(row => row.ToModel());
     }
 
+    public async Task<Result<Position, IError>> FindByNameAsync(string positionName)
+    {
+        const string sql = @"SELECT * FROM positions WHERE name = @positionName";
+
+        return await _db
+            .QueryFirstAsync<PositionRow>(new(sql, new { positionName }))
+            .MapAsync(row => row.ToModel());
+    }
+
     public async Task<Result<IError>> InsertAsync(Position position)
     {
         const string sql = @"
-INSERT INTO positions (id, name)
-VALUES (@Id, @Name)";
+INSERT INTO positions (id, type, name)
+VALUES (@Id, @Type, @Name)";
 
         return await _db.ExecuteAsync(new(sql, new PositionRow(position)));
     }
