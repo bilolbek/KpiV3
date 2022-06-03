@@ -8,6 +8,7 @@ namespace KpiV3.Domain.Employees.Commands;
 public record CreatePositionCommand : IRequest<Result<Position, IError>>
 {
     public string Name { get; init; } = default!;
+    public PositionType Type { get; init; } = default!;
 }
 
 public class CreatePositionCommandHandler : IRequestHandler<CreatePositionCommand, Result<Position, IError>>
@@ -29,6 +30,7 @@ public class CreatePositionCommandHandler : IRequestHandler<CreatePositionComman
         {
             Id = _guidProvider.New(),
             Name = request.Name,
+            Type = request.Type,
         };
 
         return await _positionRepository

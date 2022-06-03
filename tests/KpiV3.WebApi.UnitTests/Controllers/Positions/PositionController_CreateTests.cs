@@ -7,7 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
-namespace KpiV3.WebApi.UnitTests;
+namespace KpiV3.WebApi.UnitTests.Controllers.Positions;
 
 public class PositionController_CreateTests
 {
@@ -32,15 +32,17 @@ public class PositionController_CreateTests
             .ReturnsAsync(Result<Position, IError>.Ok(position));
 
         // Act
-        var response = await controller.Create(request);
+        var response = await controller.CreateAsync(request);
 
         // Assert
         response.Should().BeOfType<OkObjectResult>();
         var result = response.As<OkObjectResult>();
         result.Value.Should().BeOfType<CreatePositionResponse>();
-        var responseModel = result.Value.As<CreatePositionResponse>();
-        responseModel.Id.Should().Be(position.Id);
-        responseModel.Name.Should().Be(position.Name);
+        result.Value.As<CreatePositionResponse>().Should().Be(new CreatePositionResponse
+        {
+            Id = position.Id,
+            Name = position.Name,
+        });
     }
 
     [Fact]
@@ -61,12 +63,12 @@ public class PositionController_CreateTests
             .Setup(m => m.Send(It.IsAny<CreatePositionCommand>(), default))
             .ReturnsAsync(Result<Position, IError>.Ok(position));
         // Act
-        await controller.Create(request);
+        await controller.CreateAsync(request);
 
         // Assert
         _mediator.Verify(m => m.Send(
-            It.Is<CreatePositionCommand>(command => 
-                command.Name == request.Name), 
+            It.Is<CreatePositionCommand>(command =>
+                command.Name == request.Name),
             default));
     }
 

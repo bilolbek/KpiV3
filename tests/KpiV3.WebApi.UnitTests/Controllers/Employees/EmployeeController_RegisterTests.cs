@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
-namespace KpiV3.WebApi.UnitTests;
+namespace KpiV3.WebApi.UnitTests.Controllers.Employees;
 
 public class EmployeeController_RegisterTests
 {
@@ -25,7 +25,7 @@ public class EmployeeController_RegisterTests
             .ReturnsAsync(Result<IError>.Ok());
 
         // Act
-        var response = await controller.Register(request);
+        var response = await controller.RegisterAsync(request);
 
         // Assert
         response.Should().BeOfType<OkResult>();
@@ -49,7 +49,7 @@ public class EmployeeController_RegisterTests
             .ReturnsAsync(Result<IError>.Ok());
 
         // Act
-        await controller.Register(request);
+        await controller.RegisterAsync(request);
 
         // Assert
         _mediator.Verify(m => m.Send(It.Is<RegisterEmployeeCommand>(command =>

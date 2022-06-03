@@ -13,6 +13,17 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5000
       
+      - DataInitialization__Positions__0__Name=Admin
+      - DataInitialization__Positions__0__Type=Root
+
+      - DataInitialization__Employees__1__Email=admin@kpi.com
+      - DataInitialization__Employees__1__FirstName=Admin
+      - DataInitialization__Employees__1__LastName=Adminovich
+      - DataInitialization__Employees__1__Position=Admin
+
+      - DataInitialization__RetryCount=5
+      - DataInitialization__RetryWait=00:00:10
+
     ports:
       - 5000:5000
 

@@ -17,7 +17,7 @@ public class NullEmailSender : IEmailSender
 
     public Task<Result<IError>> SendAsync(EmailMessage message)
     {
-        _logger.LogDebug(
+        _logger.LogInformation(
             "Email to {Recipient}. Subject: {Subject}. Body: {Body}",
             message.Recipient.ToString(),
             message.Subject,
