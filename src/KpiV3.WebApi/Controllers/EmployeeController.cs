@@ -1,4 +1,6 @@
-﻿using KpiV3.WebApi.DataContracts.Employees;
+﻿using KpiV3.Domain.Employees.Commands;
+using KpiV3.WebApi.Converters;
+using KpiV3.WebApi.DataContracts.Employees;
 using KpiV3.WebApi.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -26,6 +28,17 @@ public class EmployeeController : ControllerBase
     {
         return await _mediator
             .Send(request.ToCommand())
+            .MatchAsync(() => Ok(), error => error.MapToActionResult());
+    }
+
+    [HttpPost("import")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> ImportAsync([FromForm] IFormFile file)
+    {
+        return await CsvConverter
+            .Convert<BulkRegisterEmployee>(file.OpenReadStream())
+            .Map(employees => new BulkRegisterEmployeesCommand { Employees = employees })
+            .BindAsync(command => _mediator.Send(command))
             .MatchAsync(() => Ok(), error => error.MapToActionResult());
     }
 }
