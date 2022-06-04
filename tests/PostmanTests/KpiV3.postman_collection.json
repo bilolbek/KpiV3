@@ -512,6 +512,192 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Specialties",
+			"item": [
+				{
+					"name": "Create Specialty",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let specialtyId = pm.response.json().id;\r",
+									"\r",
+									"pm.environment.set('specialty_id', specialtyId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Dean 1.0\",\r\n    \"description\": \"Common dean. Does dean stuff...\",\r\n    \"positionId\": \"{{dean_position_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/{{version}}/specialty",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"specialty"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Specialties Of Position",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/specialty/by-position/{{dean_position_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"specialty",
+								"by-position",
+								"{{dean_position_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Specialty By Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/specialty/{{specialty_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"specialty",
+								"{{specialty_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Specialty",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Dean 1.0\",\r\n    \"description\": \"Deans must do some stuff...\",\r\n    \"positionId\": \"{{dean_position_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/{{version}}/specialty/{{specialty_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"specialty",
+								"{{specialty_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Specialty",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/specialty/{{specialty_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"specialty",
+								"{{specialty_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

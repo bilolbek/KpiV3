@@ -4,7 +4,7 @@ namespace KpiV3.Domain.Employees.DataContracts;
 
 public record Employee
 {
-    public Guid Id { get; init; }
+    public Guid Id { get; set; }
 
     public string Email { get; set; } = default!;
     public Name Name { get; set; }
@@ -12,5 +12,5 @@ public record Employee
 
     public Guid PositionId { get; set; }
 
-    public DateTimeOffset RegistrationDate { get; init; }
+    public DateTimeOffset RegistrationDate { get; set; }
 }
