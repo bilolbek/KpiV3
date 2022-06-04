@@ -24,6 +24,7 @@ public class PositionController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(Page<PositionDto>))]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> GetAsync([FromQuery] GetPositionsRequest request)
     {
         return await _mediator

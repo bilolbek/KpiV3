@@ -52,6 +52,6 @@ VALUES (@Id, @Type, @Name)";
     {
         const string sql = @"UPDATE positions SET type = @Type, name = @Name WHERE id = @Id";
 
-        return await _db.ExecuteAsync(new(sql, new PositionRow(position)));
+        return await _db.ExecuteRequiredChangeAsync<Position>(new(sql, new PositionRow(position)));
     }
 }
