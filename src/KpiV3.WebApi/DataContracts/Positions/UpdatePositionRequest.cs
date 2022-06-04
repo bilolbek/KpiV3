@@ -3,15 +3,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace KpiV3.WebApi.DataContracts.Positions;
 
-public record CreatePositionRequest
+public record UpdatePositionRequest
 {
     [Required(AllowEmptyStrings = false)]
     public string Name { get; set; } = default!;
 
-    public CreatePositionCommand ToCommand()
+    public UpdatePositionCommand ToCommand(Guid positionId)
     {
-        return new CreatePositionCommand
+        return new UpdatePositionCommand
         {
+            PositionId = positionId,
             Name = Name,
         };
     }

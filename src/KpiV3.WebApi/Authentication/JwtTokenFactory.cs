@@ -1,5 +1,6 @@
 ﻿using KpiV3.Domain.Employees.DataContracts;
 using KpiV3.Domain.Ports;
+using KpiV3.Domain.Positions.DataContracts;
 using KpiV3.WebApi.Authentication.DataContracts;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;

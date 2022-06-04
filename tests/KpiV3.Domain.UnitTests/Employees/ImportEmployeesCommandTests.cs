@@ -1,13 +1,13 @@
 ﻿using FluentAssertions;
 using KpiV3.Domain.Employees.Commands;
-using KpiV3.Domain.Employees.DataContracts;
-using KpiV3.Domain.Employees.Ports;
+using KpiV3.Domain.Positions.DataContracts;
+using KpiV3.Domain.Positions.Ports;
 using MediatR;
 using Moq;
 
 namespace KpiV3.Domain.UnitTests.Employees;
 
-public class BulkRegisterEmployeesCommandTests
+public class ImportEmployeesCommandTests
 {
     private readonly Mock<IPositionRepository> _positionRepository = new();
     private readonly Mock<IMediator> _mediator = new();
@@ -23,7 +23,7 @@ public class BulkRegisterEmployeesCommandTests
             .Setup(r => r.FindByNameAsync(command.Employees[0].Position))
             .ReturnsAsync(Result<Position, IError>.Ok(new()
             {
-                Id = new("a6140653-e9a0-464a-99e4-11481eabf017"),
+                Id = Guid.NewGuid(),
                 Name = command.Employees[0].Position
             }));
 
@@ -31,7 +31,7 @@ public class BulkRegisterEmployeesCommandTests
             .Setup(r => r.FindByNameAsync(command.Employees[1].Position))
             .ReturnsAsync(Result<Position, IError>.Ok(new()
             {
-                Id = new("291ec7bf-7549-45c1-a597-7cb1d6fd4a2b"),
+                Id = Guid.NewGuid(),
                 Name = command.Employees[1].Position
             }));
 
@@ -82,9 +82,9 @@ public class BulkRegisterEmployeesCommandTests
         result.Failure.Should().Be(expectedError);
     }
 
-    private BulkRegisterEmployeesCommand CreateCommand()
+    private ImportEmployeesCommand CreateCommand()
     {
-        return new BulkRegisterEmployeesCommand
+        return new ImportEmployeesCommand
         {
             Employees = new()
             {
@@ -113,9 +113,9 @@ public class BulkRegisterEmployeesCommandTests
         };
     }
 
-    private BulkRegisterEmployeesCommandHandler CreateHandler()
+    private ImportEmployeesCommandHandler CreateHandler()
     {
-        return new BulkRegisterEmployeesCommandHandler(
+        return new ImportEmployeesCommandHandler(
             _positionRepository.Object,
             _mediator.Object);
     }

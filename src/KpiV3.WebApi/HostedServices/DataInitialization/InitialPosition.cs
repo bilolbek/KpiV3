@@ -1,5 +1,5 @@
-﻿using KpiV3.Domain.Employees.Commands;
-using KpiV3.Domain.Employees.DataContracts;
+﻿using KpiV3.Domain.Positions.Commands;
+using KpiV3.Domain.Positions.DataContracts;
 
 namespace KpiV3.WebApi.HostedServices.DataInitialization;
 

@@ -1,4 +1,4 @@
-﻿namespace KpiV3.Domain.Employees.DataContracts;
+﻿namespace KpiV3.Domain.Positions.DataContracts;
 
 public record Position
 {

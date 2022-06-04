@@ -1,6 +1,7 @@
 ﻿using KpiV3.Infrastructure.Adapters.Extensions;
 using KpiV3.Infrastructure.Data.Extensions;
 using KpiV3.Infrastructure.Employees.Extensions;
+using KpiV3.Infrastructure.Positions.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,7 @@ public static class DependencyInjectionExtensions
         return services
             .AddPrimitiveProviders()
             .AddNpsql(configuration)
-            .AddEmployeeAdapters(configuration, environment);
+            .AddEmployeeAdapters(configuration, environment)
+            .AddPositionAdapters();
     }
 }

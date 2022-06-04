@@ -1,63 +1,105 @@
-﻿using KpiV3.Domain.Employees.DataContracts;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.DependencyInjection;
-using Moq;
-using MediatR;
-using KpiV3.Domain.Employees.Commands;
-using KpiV3.WebApi.Converters;
+﻿using KpiV3.WebApi.Converters;
 using FluentAssertions;
+using KpiV3.WebApi.DataContracts.Employees;
+using KpiV3.Domain.Positions.DataContracts;
 
 namespace KpiV3.FunctionalTests.Employees;
 
 public class ImportTests : TestBase
 {
-    private readonly Mock<IMediator> _mediator = new();
+    public ImportTests()
+    {
+        Authentication.Authenticate(PositionType.Root);
+    }
 
     [Fact]
     public async Task Returns_ok_on_happy_path()
     {
         // Arrange
         var request = CreateRequest();
-        var client = CreateClient();
 
         // Act
-        var response = await SendCsvAsync(client, request);
+        var response = await SendCsvAsync(request);
 
         // Assert
         response.Should().Be200Ok();
     }
 
     [Fact]
-    public async Task Maps_csv_file_to_request_correctly()
+    public async Task Creates_all_non_existing_positions_on_happy_path()
     {
         // Arrange
         var request = CreateRequest();
-        var client = CreateClient();
 
         // Act
-        await SendCsvAsync(client, request);
+        var response = await SendCsvAsync(request);
 
         // Assert
-        _mediator.Verify(m => m.Send(
-            It.Is<BulkRegisterEmployeesCommand>(c =>
-                c.Employees.Count == request.Count &&
-                c.Employees[0].Email == request[0].Email &&
-                c.Employees[0].FirstName == request[0].FirstName &&
-                c.Employees[0].LastName == request[0].LastName &&
-                c.Employees[0].MiddleName == request[0].MiddleName &&
-                c.Employees[0].Position == request[0].Position &&
-
-                c.Employees[1].Email == request[1].Email &&
-                c.Employees[1].FirstName == request[1].FirstName &&
-                c.Employees[1].LastName == request[1].LastName &&
-                c.Employees[1].MiddleName == request[1].MiddleName &&
-                c.Employees[1].Position == request[1].Position),
-            default));
+        request.ForEach(employee =>
+        {
+            Positions.Items.Values.Should().Contain(p => p.Name == employee.Position);
+        });
     }
 
-    private List<BulkRegisterEmployee> CreateRequest()
+    [Fact]
+    public async Task Created_all_employees_on_happy_path()
     {
-        return new List<BulkRegisterEmployee>()
+        // Arrange
+        var request = CreateRequest();
+
+        // Act
+        var response = await SendCsvAsync(request);
+
+        // Assert
+        request.ForEach(employee =>
+        {
+            Employees.Items.Values.Should().Contain(e =>
+                e.Name.FirstName == employee.FirstName &&
+                e.Name.LastName == employee.LastName &&
+                e.Name.MiddleName == employee.MiddleName &&
+                e.Email == employee.Email);
+        });
+    }
+
+    [Theory]
+    [MemberData(nameof(InvalidRequests))]
+    public async Task Returns_bad_request_if_input_is_invalid(List<CsvImportedEmployee> request)
+    {
+        // Arrange
+        // Act
+        var response = await SendCsvAsync(request);
+
+        // Assert
+        response.Should().Be400BadRequest();
+    }
+
+    private static IEnumerable<object[]> InvalidRequests()
+    {
+        var employee = new CsvImportedEmployee()
+        {
+            Email = "employee1@kpi.com",
+
+            FirstName = "Employee1",
+            LastName = "Employee1",
+            MiddleName = "Employee1",
+
+            Position = "Teacher"
+        };
+
+        yield return new object[] { ToRequest(employee with { Email = null! }) };
+        yield return new object[] { ToRequest(employee with { FirstName = null! }) };
+        yield return new object[] { ToRequest(employee with { LastName = null! }) };
+        yield return new object[] { ToRequest(employee with { Position = null! }) };
+
+        static List<CsvImportedEmployee> ToRequest(CsvImportedEmployee employee)
+        {
+            return new List<CsvImportedEmployee> { employee };
+        }
+    }
+
+    private List<CsvImportedEmployee> CreateRequest()
+    {
+        return new List<CsvImportedEmployee>()
         {
             new()
             {
@@ -83,7 +125,7 @@ public class ImportTests : TestBase
         };
     }
 
-    private async Task<HttpResponseMessage> SendCsvAsync(HttpClient client, List<BulkRegisterEmployee> records)
+    private async Task<HttpResponseMessage> SendCsvAsync(List<CsvImportedEmployee> records)
     {
         var content = new MultipartFormDataContent();
 
@@ -97,26 +139,6 @@ public class ImportTests : TestBase
 
         content.Add(file, name: "file", fileName: "file");
 
-        return await client.PostAsync("api/v3.0/employee/import", content);
-    }
-
-    private HttpClient CreateClient()
-    {
-        Requestor = new Employee
-        {
-            Id = new("075bcdf4-0457-4d7b-a9d5-a2b8d3ef7deb")
-        };
-
-        RequestorPosition = new Position
-        {
-            Id = new("96c06b84-f752-4cf3-b729-ce5399af6434"),
-            Name = "Admin",
-            Type = PositionType.Root,
-        };
-
-        return Authorize(CreateClient((env, services) =>
-        {
-            services.Replace(ServiceDescriptor.Transient(_ => _mediator.Object));
-        }));
+        return await Client.PostAsync("api/v3.0/employee/import", content);
     }
 }

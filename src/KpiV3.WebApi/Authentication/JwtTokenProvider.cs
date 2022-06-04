@@ -1,5 +1,6 @@
 ﻿using KpiV3.Domain.Employees.DataContracts;
 using KpiV3.Domain.Employees.Ports;
+using KpiV3.Domain.Positions.Ports;
 using KpiV3.WebApi.Authentication.DataContracts;
 
 namespace KpiV3.WebApi.Authentication;

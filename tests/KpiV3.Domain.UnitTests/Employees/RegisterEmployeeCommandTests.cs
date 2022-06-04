@@ -10,7 +10,7 @@ namespace KpiV3.Domain.UnitTests.Employees;
 
 public class RegisterEmployeeCommandTests
 {
-    private static readonly Guid EmployeeId = new("3a86f6be-ffdf-4717-9df5-d4f954b99b33");
+    private static readonly Guid EmployeeId = Guid.NewGuid();
     private static readonly DateTimeOffset RegistrationDate = new(2022, 6, 2, 20, 36, 0, TimeSpan.Zero);
     private const string Password = "qwerty123";
     private const string Hash = "SOME_RANDOM_HASH";
@@ -208,7 +208,7 @@ public class RegisterEmployeeCommandTests
                 LastName = "Waterson",
             },
 
-            PositionId = Guid.Parse("4e1fc1e7-8a09-40ea-bbe5-f708f0baf3e8")
+            PositionId = Guid.NewGuid(),
         };
     }
 

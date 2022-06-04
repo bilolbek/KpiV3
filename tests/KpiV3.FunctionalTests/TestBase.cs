@@ -1,78 +1,62 @@
-﻿using KpiV3.Domain.Employees.DataContracts;
-using KpiV3.Infrastructure.Adapters;
-using KpiV3.WebApi.Authentication;
+﻿using KpiV3.Domain.Employees.Ports;
+using KpiV3.Domain.Positions.Ports;
+using KpiV3.FunctionalTests.Fakes;
 using KpiV3.WebApi.HostedServices.DataInitialization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.IdentityModel.Tokens;
-using System.Net.Http.Headers;
 
 namespace KpiV3.FunctionalTests;
 
 public abstract class TestBase
 {
-    public Employee? Requestor { get; set; }
-    public Position? RequestorPosition { get; set; }
-
-    protected DateTimeOffset JwtIssueTime { get; set; } = DateTimeOffset.Now;
-
-    protected JwtOptions Jwt { get; } = new()
+    public TestBase()
     {
-        Audience = "TEST_AUDIENCE",
-        Issuer = "TEST_ISSUER",
-        Secret = "TEST_SECRET_USE_ONLY_FOR_FUNCTIONAL_TESTING_PURPOSES",
-        TokenLifetime = TimeSpan.FromHours(1),
-    };
-
-    protected HttpClient Authorize(HttpClient client)
-    {
-        if (RequestorPosition is null || Requestor is null)
-        {
-            throw new InvalidOperationException("Must set Requestor and his position to authorize client");
-        }
-
-        var jwtFactory = new JwtTokenFactory(
-            new DateProvider(),
-            Options.Create(Jwt));
-
-        var token = jwtFactory.CreateToken(Requestor, RequestorPosition);
-
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
-
-        return client;
+        Positions = new();
+        Employees = new();
+        Authentication = new TestAuthentication();
+        Client = CreateClient();
+        Authentication.SetClient(Client);
     }
 
-    protected HttpClient CreateClient(Action<IWebHostEnvironment, IServiceCollection> configure)
+    public HttpClient Client { get; }
+    public TestAuthentication Authentication { get; }
+
+    public InMemoryPositionRepository Positions { get; }
+    public InMemoryEmployeeRepository Employees { get; }
+
+    protected virtual void ConfigureServices(IServiceCollection services)
     {
-        var application = new WebApplicationFactory<Program>().WithWebHostBuilder(host =>
+        services.Replace(ServiceDescriptor.Transient<IPositionRepository>(_ => Positions));
+        services.Replace(ServiceDescriptor.Transient<IEmployeeRepository>(_ => Employees));
+    }
+
+    private HttpClient CreateClient()
+    {
+        return new WebApplicationFactory<Program>().WithWebHostBuilder(host =>
         {
             host.ConfigureServices((context, services) =>
             {
                 services.Remove(services.First(d => d.ImplementationType == typeof(DataInitializationService)));
 
-
-                configure(context.HostingEnvironment, services);
+                ConfigureServices(services);
             });
 
             host.ConfigureAppConfiguration(configuration =>
             {
                 var options = new Dictionary<string, string>
                 {
-                    ["Jwt:Issuer"] = Jwt.Issuer,
-                    ["Jwt:Audience"] = Jwt.Audience,
-                    ["Jwt:Secret"] = Jwt.Secret,
-                    ["Jwt:TokenLifetime"] = Jwt.TokenLifetime.ToString(),
+                    ["Jwt:Issuer"] = Authentication.Jwt.Issuer,
+                    ["Jwt:Audience"] = Authentication.Jwt.Audience,
+                    ["Jwt:Secret"] = Authentication.Jwt.Secret,
+                    ["Jwt:TokenLifetime"] = Authentication.Jwt.TokenLifetime.ToString(),
                 };
 
                 configuration.AddInMemoryCollection(options);
             });
-        });
-
-        return application.CreateClient();
+        }).CreateClient();
     }
 }

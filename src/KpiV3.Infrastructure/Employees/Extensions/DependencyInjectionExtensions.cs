@@ -62,7 +62,6 @@ public static class DependencyInjectionExtensions
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         return services
-            .AddTransient<IEmployeeRepository, EmployeeRepository>()
-            .AddTransient<IPositionRepository, PositionRepository>();
+            .AddTransient<IEmployeeRepository, EmployeeRepository>();
     }
 }

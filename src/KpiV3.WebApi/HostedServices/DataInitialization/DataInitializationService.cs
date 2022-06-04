@@ -1,5 +1,6 @@
-﻿using KpiV3.Domain.Employees.DataContracts;
-using KpiV3.Domain.Employees.Ports;
+﻿using KpiV3.Domain.Employees.Ports;
+using KpiV3.Domain.Positions.DataContracts;
+using KpiV3.Domain.Positions.Ports;
 using MediatR;
 using Microsoft.Extensions.Options;
 
