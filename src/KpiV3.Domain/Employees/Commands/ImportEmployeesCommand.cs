@@ -1,38 +1,30 @@
-﻿using KpiV3.Domain.Employees.DataContracts;
-using KpiV3.Domain.Employees.Ports;
+﻿using KpiV3.Domain.Positions.Commands;
+using KpiV3.Domain.Positions.DataContracts;
+using KpiV3.Domain.Positions.Ports;
 using MediatR;
-using System.ComponentModel.DataAnnotations;
 
 namespace KpiV3.Domain.Employees.Commands;
 
-public record BulkRegisterEmployee
+public record ImportedEmployee
 {
-    [Required]
-    public string Email { get; init; } = default!;
-
-    [Required]
-    public string FirstName { get; init; } = default!;
-    
-    [Required]
-    public string LastName { get; init; } = default!;
-    
-    public string? MiddleName { get; init; }
-    
-    [Required]
-    public string Position { get; init; } = default!;
+    public string Email { get; set; } = default!;
+    public string FirstName { get; set; } = default!;
+    public string LastName { get; set; } = default!;
+    public string? MiddleName { get; set; }
+    public string Position { get; set; } = default!;
 }
 
-public record BulkRegisterEmployeesCommand : IRequest<Result<IError>>
+public record ImportEmployeesCommand : IRequest<Result<IError>>
 {
-    public List<BulkRegisterEmployee> Employees { get; init; } = default!;
+    public List<ImportedEmployee> Employees { get; init; } = default!;
 }
 
-public class BulkRegisterEmployeesCommandHandler : IRequestHandler<BulkRegisterEmployeesCommand, Result<IError>>
+public class ImportEmployeesCommandHandler : IRequestHandler<ImportEmployeesCommand, Result<IError>>
 {
     private readonly IPositionRepository _positionRepository;
     private readonly IMediator _mediator;
 
-    public BulkRegisterEmployeesCommandHandler(
+    public ImportEmployeesCommandHandler(
         IPositionRepository positionRepository,
         IMediator mediator)
     {
@@ -40,7 +32,7 @@ public class BulkRegisterEmployeesCommandHandler : IRequestHandler<BulkRegisterE
         _mediator = mediator;
     }
 
-    public async Task<Result<IError>> Handle(BulkRegisterEmployeesCommand request, CancellationToken cancellationToken)
+    public async Task<Result<IError>> Handle(ImportEmployeesCommand request, CancellationToken cancellationToken)
     {
         var context = new BulkContext(_positionRepository, _mediator);
 
@@ -72,7 +64,7 @@ public class BulkRegisterEmployeesCommandHandler : IRequestHandler<BulkRegisterE
             _positionIds = new();
         }
 
-        public async Task<Result<IError>> RegisterEmployeeAsync(BulkRegisterEmployee employee)
+        public async Task<Result<IError>> RegisterEmployeeAsync(ImportedEmployee employee)
         {
             return await GetPositionIdAsync(employee.Position)
                 .BindAsync(positionId => _mediator.Send(new RegisterEmployeeCommand

@@ -36,8 +36,9 @@ public class EmployeeController : ControllerBase
     public async Task<IActionResult> ImportAsync([FromForm] IFormFile file)
     {
         return await CsvConverter
-            .Convert<BulkRegisterEmployee>(file.OpenReadStream())
-            .Map(employees => new BulkRegisterEmployeesCommand { Employees = employees })
+            .Convert<CsvImportedEmployee>(file.OpenReadStream())
+            .Map(employees => employees.Select(e => e.ToRegisterEmployee()).ToList())
+            .Map(employees => new ImportEmployeesCommand { Employees = employees })
             .BindAsync(command => _mediator.Send(command))
             .MatchAsync(() => Ok(), error => error.MapToActionResult());
     }

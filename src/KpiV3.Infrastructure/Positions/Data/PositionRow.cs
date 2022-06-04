@@ -1,6 +1,6 @@
-﻿using KpiV3.Domain.Employees.DataContracts;
+﻿using KpiV3.Domain.Positions.DataContracts;
 
-namespace KpiV3.Infrastructure.Employees.Data;
+namespace KpiV3.Infrastructure.Positions.Data;
 
 public class PositionRow
 {

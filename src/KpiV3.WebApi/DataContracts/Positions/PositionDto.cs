@@ -1,14 +1,14 @@
-﻿using KpiV3.Domain.Employees.DataContracts;
+﻿using KpiV3.Domain.Positions.DataContracts;
 
 namespace KpiV3.WebApi.DataContracts.Positions;
 
-public record CreatePositionResponse
+public record PositionDto
 {
-    public CreatePositionResponse()
+    public PositionDto()
     {
     }
 
-    public CreatePositionResponse(Position position)
+    public PositionDto(Position position)
     {
         Id = position.Id;
         Name = position.Name;

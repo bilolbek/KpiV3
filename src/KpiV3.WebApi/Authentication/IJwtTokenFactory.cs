@@ -1,4 +1,5 @@
 ﻿using KpiV3.Domain.Employees.DataContracts;
+using KpiV3.Domain.Positions.DataContracts;
 using KpiV3.WebApi.Authentication.DataContracts;
 
 namespace KpiV3.WebApi.Authentication;

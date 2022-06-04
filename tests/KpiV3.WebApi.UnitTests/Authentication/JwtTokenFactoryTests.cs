@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using KpiV3.Domain.Employees.DataContracts;
 using KpiV3.Domain.Ports;
+using KpiV3.Domain.Positions.DataContracts;
 using KpiV3.WebApi.Authentication;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -73,4 +74,3 @@ public class JwtTokenFactoryTests
         token.Claims.Should().Contain(claim => claim.Type == "middleName" && claim.Value == employee.Name.MiddleName);
     }
 }
-

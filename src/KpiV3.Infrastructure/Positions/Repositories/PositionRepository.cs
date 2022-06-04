@@ -1,9 +1,9 @@
-﻿using KpiV3.Domain.Employees.DataContracts;
-using KpiV3.Domain.Employees.Ports;
+﻿using KpiV3.Domain.Positions.DataContracts;
+using KpiV3.Domain.Positions.Ports;
 using KpiV3.Infrastructure.Data;
-using KpiV3.Infrastructure.Employees.Data;
+using KpiV3.Infrastructure.Positions.Data;
 
-namespace KpiV3.Infrastructure.Employees.Repositories;
+namespace KpiV3.Infrastructure.Positions.Repositories;
 
 internal class PositionRepository : IPositionRepository
 {
@@ -37,6 +37,20 @@ internal class PositionRepository : IPositionRepository
         const string sql = @"
 INSERT INTO positions (id, type, name)
 VALUES (@Id, @Type, @Name)";
+
+        return await _db.ExecuteAsync(new(sql, new PositionRow(position)));
+    }
+
+    public async Task<Result<IError>> DeleteAsync(Guid positionId)
+    {
+        const string sql = @"DELETE FROM positions WHERE id = @positionId";
+
+        return await _db.ExecuteRequiredChangeAsync<Position>(new(sql, new { positionId }));
+    }
+
+    public async Task<Result<IError>> UpdateAsync(Position position)
+    {
+        const string sql = @"UPDATE positions SET type = @Type, name = @Name WHERE id = @Id";
 
         return await _db.ExecuteAsync(new(sql, new PositionRow(position)));
     }

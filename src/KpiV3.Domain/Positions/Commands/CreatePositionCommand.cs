@@ -1,9 +1,9 @@
-﻿using KpiV3.Domain.Employees.DataContracts;
-using KpiV3.Domain.Employees.Ports;
-using KpiV3.Domain.Ports;
+﻿using KpiV3.Domain.Ports;
+using KpiV3.Domain.Positions.DataContracts;
+using KpiV3.Domain.Positions.Ports;
 using MediatR;
 
-namespace KpiV3.Domain.Employees.Commands;
+namespace KpiV3.Domain.Positions.Commands;
 
 public record CreatePositionCommand : IRequest<Result<Position, IError>>
 {

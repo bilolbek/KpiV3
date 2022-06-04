@@ -1,4 +1,4 @@
-﻿using KpiV3.Domain.Employees.DataContracts;
+﻿using KpiV3.Domain.Positions.DataContracts;
 using System.Security.Claims;
 
 namespace KpiV3.WebApi.Authentication;
