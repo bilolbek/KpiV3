@@ -1,6 +1,6 @@
 ﻿using KpiV3.Domain.Employees.DataContracts;
 using KpiV3.Domain.Positions.DataContracts;
-using KpiV3.Infrastructure.Adapters;
+using KpiV3.Infrastructure.Common;
 using KpiV3.WebApi.Authentication;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;

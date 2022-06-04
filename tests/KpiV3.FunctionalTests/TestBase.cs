@@ -1,4 +1,5 @@
 ﻿using KpiV3.Domain.Employees.Ports;
+using KpiV3.Domain.Periods.Ports;
 using KpiV3.Domain.Positions.Ports;
 using KpiV3.FunctionalTests.Fakes;
 using KpiV3.WebApi.HostedServices.DataInitialization;
@@ -17,6 +18,7 @@ public abstract class TestBase
     {
         Positions = new();
         Employees = new();
+        Periods = new();
         Authentication = new TestAuthentication();
         Client = CreateClient();
         Authentication.SetClient(Client);
@@ -27,11 +29,13 @@ public abstract class TestBase
 
     public InMemoryPositionRepository Positions { get; }
     public InMemoryEmployeeRepository Employees { get; }
+    public InMemoryPeriodRepository Periods { get; }
 
     protected virtual void ConfigureServices(IServiceCollection services)
     {
         services.Replace(ServiceDescriptor.Transient<IPositionRepository>(_ => Positions));
         services.Replace(ServiceDescriptor.Transient<IEmployeeRepository>(_ => Employees));
+        services.Replace(ServiceDescriptor.Transient<IPeriodRepository>(_ => Periods));
     }
 
     private HttpClient CreateClient()

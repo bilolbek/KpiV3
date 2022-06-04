@@ -1,7 +1,7 @@
 ﻿using KpiV3.Domain.Ports;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace KpiV3.Infrastructure.Adapters.Extensions;
+namespace KpiV3.Infrastructure.Common.Extensions;
 
 public static class DependencyInjectionExtensions
 {

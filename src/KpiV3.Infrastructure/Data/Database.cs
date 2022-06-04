@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using KpiV3.Domain.DataContracts.Errors;
 using KpiV3.Rop;
+using System.Data;
 using System.Data.Common;
 
 namespace KpiV3.Infrastructure.Data;
@@ -12,6 +13,22 @@ internal class Database
     public Database(DbConnection connection)
     {
         _connection = connection;
+    }
+
+    public async Task<Result<IError>> RunTransactionAsync(Func<Task<Result<IError>>> action)
+    {
+        try
+        {
+            await using var transaction = await _connection.BeginTransactionAsync();
+
+            return await action()
+                .TeeAsync(() => transaction.CommitAsync())
+                .TeeFailureAsync(_ => transaction.RollbackAsync());
+        }
+        catch (Exception exception)
+        {
+            return Result<IError>.Fail(MapToError(exception));
+        }
     }
 
     public async Task<Result<IError>> ExecuteAsync(CommandDefinition command)
