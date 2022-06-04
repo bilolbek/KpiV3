@@ -1,4 +1,5 @@
 ﻿using KpiV3.Domain.Positions.Commands;
+using KpiV3.Domain.Positions.DataContracts;
 using System.ComponentModel.DataAnnotations;
 
 namespace KpiV3.WebApi.DataContracts.Positions;
@@ -13,6 +14,7 @@ public record CreatePositionRequest
         return new CreatePositionCommand
         {
             Name = Name,
+            Type = PositionType.Employee,
         };
     }
 }
