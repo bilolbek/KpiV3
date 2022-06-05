@@ -1,4 +1,5 @@
-﻿using KpiV3.Domain.DataContracts.Models;
+﻿using KpiV3.Domain.Common;
+using KpiV3.Domain.DataContracts.Models;
 using KpiV3.Domain.Periods.Commands;
 using KpiV3.Domain.Periods.Queries;
 using KpiV3.WebApi.DataContracts.Periods;
@@ -16,10 +17,14 @@ namespace KpiV3.WebApi.Controllers;
 public class PeriodController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IDateProvider _dateProvider;
 
-    public PeriodController(IMediator mediator)
+    public PeriodController(
+        IMediator mediator, 
+        IDateProvider dateProvider)
     {
         _mediator = mediator;
+        _dateProvider = dateProvider;
     }
 
     [HttpGet("active")]
@@ -27,7 +32,7 @@ public class PeriodController : ControllerBase
     public async Task<IActionResult> GetActiveAsync()
     {
         return await _mediator
-            .Send(new GetActivePeriodQuery())
+            .Send(new GetActivePeriodQuery() { Now = _dateProvider.Now() })
             .MapAsync(p => new PeriodDto(p))
             .MatchAsync(p => Ok(p), error => error.MapToActionResult());
     }
