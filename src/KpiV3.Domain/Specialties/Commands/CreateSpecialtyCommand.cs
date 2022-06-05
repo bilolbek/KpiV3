@@ -1,4 +1,4 @@
-﻿using KpiV3.Domain.Ports;
+﻿using KpiV3.Domain.Common;
 using KpiV3.Domain.Specialties.DataContracts;
 using KpiV3.Domain.Specialties.Ports;
 using MediatR;

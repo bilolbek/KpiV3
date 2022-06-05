@@ -1,4 +1,4 @@
-﻿namespace KpiV3.Domain.Ports;
+﻿namespace KpiV3.Domain.Common;
 
 public interface IGuidProvider
 {
