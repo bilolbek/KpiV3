@@ -14,6 +14,17 @@ internal class PeriodRepository : IPeriodRepository
         _db = db;
     }
 
+    public async Task<Result<Period, IError>> FindByIdAsync(Guid periodId)
+    {
+        const string sql = @"
+SELECT * FROM periods
+WHERE id = @periodId";
+
+        return await _db
+            .QueryFirstAsync<PeriodRow>(new(sql, new { periodId }))
+            .MapAsync(row => row.ToModel());
+    }
+
     public async Task<Result<IError>> InsertAsync(Period period)
     {
         const string sql = @"

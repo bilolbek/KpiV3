@@ -27,4 +27,14 @@ public class InMemoryPeriodRepository : IPeriodRepository
 
         return Task.FromResult(Result<IError>.Ok());
     }
+
+    public Task<Result<Period, IError>> FindByIdAsync(Guid periodId)
+    {
+        if (Items.TryGetValue(periodId, out var period))
+        {
+            return Task.FromResult(Result<Period, IError>.Ok(period));
+        }
+
+        return Task.FromResult(Result<Period, IError>.Fail(new NoEntity(typeof(Period))));
+    }
 }

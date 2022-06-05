@@ -4,6 +4,7 @@ using KpiV3.Infrastructure.Data.Extensions;
 using KpiV3.Infrastructure.Employees.Extensions;
 using KpiV3.Infrastructure.Files.Extensions;
 using KpiV3.Infrastructure.Indicators.Extensions;
+using KpiV3.Infrastructure.PeriodParts.Extensions;
 using KpiV3.Infrastructure.Periods.Extensions;
 using KpiV3.Infrastructure.Positions.Extensions;
 using KpiV3.Infrastructure.Posts.Extensions;
@@ -31,6 +32,7 @@ public static class DependencyInjectionExtensions
             .AddIndicatorAdapters()
             .AddFileAdapters(configuration)
             .AddCommentAdapters()
-            .AddPostAdapters();
+            .AddPostAdapters()
+            .AddPeriodPartAdapters();
     }
 }
