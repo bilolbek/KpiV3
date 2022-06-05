@@ -386,6 +386,48 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Employees",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/employee?pageNumber=1&pageSize=10&positionId={{dean_position_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"employee"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "positionId",
+									"value": "{{dean_position_id}}"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1481,7 +1523,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Year 2022\",\r\n    \"from\": \"2021-01-01T00:00:00.000Z\",\r\n    \"to\": \"2021-12-31T23:59:59.999Z\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Year 2022\",\r\n    \"from\": \"2021-01-01T00:00:00.000Z\",\r\n    \"to\": \"2023-12-31T23:59:59.999Z\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1489,13 +1531,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/period",
+							"raw": "{{host}}/api/period",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"period"
 							]
 						}
