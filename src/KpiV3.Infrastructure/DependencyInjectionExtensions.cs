@@ -3,13 +3,16 @@ using KpiV3.Infrastructure.Common.Extensions;
 using KpiV3.Infrastructure.Data.Extensions;
 using KpiV3.Infrastructure.Employees.Extensions;
 using KpiV3.Infrastructure.Files.Extensions;
+using KpiV3.Infrastructure.Grades.Extensions;
 using KpiV3.Infrastructure.Indicators.Extensions;
 using KpiV3.Infrastructure.PeriodParts.Extensions;
 using KpiV3.Infrastructure.Periods.Extensions;
 using KpiV3.Infrastructure.Positions.Extensions;
 using KpiV3.Infrastructure.Posts.Extensions;
+using KpiV3.Infrastructure.Requirements.Extensions;
 using KpiV3.Infrastructure.Specialties.Extensions;
 using KpiV3.Infrastructure.SpecialtyChoices.Extensions;
+using KpiV3.Infrastructure.Submissions.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,6 +38,9 @@ public static class DependencyInjectionExtensions
             .AddCommentAdapters()
             .AddPostAdapters()
             .AddPeriodPartAdapters()
-            .AddSpecialtyChoiceAdapters();
+            .AddSpecialtyChoiceAdapters()
+            .AddRequirementAdapters()
+            .AddSubmissionAdapters()
+            .AddGradeAdapters();
     }
 }

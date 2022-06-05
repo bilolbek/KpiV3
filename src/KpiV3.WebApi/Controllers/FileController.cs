@@ -1,7 +1,10 @@
-﻿using KpiV3.Domain.Files;
+﻿using KpiV3.Domain.DataContracts.Models;
+using KpiV3.Domain.Files;
 using KpiV3.Domain.Files.DataContracts;
 using KpiV3.WebApi.Authentication;
+using KpiV3.WebApi.DataContracts.Files;
 using KpiV3.WebApi.Extensions;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,13 +18,25 @@ public class FileController : ControllerBase
 {
     private readonly FileService _fileService;
     private readonly IEmployeeAccessor _employeeAccessor;
+    private readonly IMediator _mediator;
 
     public FileController(
         FileService fileService,
-        IEmployeeAccessor employeeAccessor)
+        IEmployeeAccessor employeeAccessor,
+        IMediator mediator)
     {
         _fileService = fileService;
         _employeeAccessor = employeeAccessor;
+        _mediator = mediator;
+    }
+
+    [HttpGet]
+    [ProducesResponseType(200, Type = typeof(Page<FileMetadata>))]
+    public async Task<IActionResult> GetUploadedFilesAsync([FromQuery] GetUploadedFilesRequest request)
+    {
+        return await _mediator
+            .Send(request.ToQuery(_employeeAccessor.EmployeeId))
+            .MatchAsync(files => Ok(files), error => error.MapToActionResult());
     }
 
     [HttpPost]
