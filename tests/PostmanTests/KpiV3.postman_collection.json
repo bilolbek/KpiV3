@@ -223,7 +223,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"admin@kpi.com\",\r\n    \"password\": \"qwerty123\"\r\n}",
+							"raw": "{\r\n    \"email\": \"admin@kpi.com\",\r\n    \"password\": \"n0yb7m7l\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -252,6 +252,16 @@
 				{
 					"name": "Register Employee",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -312,6 +322,76 @@
 								"{{version}}",
 								"employee",
 								"import"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Allow Specialty Change",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"employeeId\": \"{{my_id}}\",\r\n    \"periodId\": \"{{period_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/{{version}}/employee/allow-specialty-change",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"employee",
+								"allow-specialty-change"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/employee/reset-password/{{my_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"employee",
+								"reset-password",
+								"{{my_id}}"
 							]
 						}
 					},
@@ -546,7 +626,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Dean 1.0\",\r\n    \"description\": \"Common dean. Does dean stuff...\",\r\n    \"positionId\": \"{{dean_position_id}}\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Dean 2.0\",\r\n    \"description\": \"Super dean. Does dean stuff...\",\r\n    \"positionId\": \"{{dean_position_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -963,6 +1043,22 @@
 			"item": [
 				{
 					"name": "Get Profile Information",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let myId = pm.response.json().id;\r",
+									"\r",
+									"pm.environment.set('my_id', myId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -976,6 +1072,10 @@
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{host}}/api/{{version}}/profile",
 							"host": [
@@ -1062,6 +1162,76 @@
 								"{{version}}",
 								"profile",
 								"change-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Choosen Specialty By Period Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/profile/specialty/{{period_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"profile",
+								"specialty",
+								"{{period_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Choose Specialty",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"specialtyId\": \"{{specialty_id}}\",\r\n    \"periodId\": \"{{period_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/{{version}}/profile/specialty",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"profile",
+								"specialty"
 							]
 						}
 					},

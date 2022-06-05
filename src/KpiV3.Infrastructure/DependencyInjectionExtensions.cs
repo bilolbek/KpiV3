@@ -9,6 +9,7 @@ using KpiV3.Infrastructure.Periods.Extensions;
 using KpiV3.Infrastructure.Positions.Extensions;
 using KpiV3.Infrastructure.Posts.Extensions;
 using KpiV3.Infrastructure.Specialties.Extensions;
+using KpiV3.Infrastructure.SpecialtyChoices.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,6 +34,7 @@ public static class DependencyInjectionExtensions
             .AddFileAdapters(configuration)
             .AddCommentAdapters()
             .AddPostAdapters()
-            .AddPeriodPartAdapters();
+            .AddPeriodPartAdapters()
+            .AddSpecialtyChoiceAdapters();
     }
 }

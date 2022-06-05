@@ -1,4 +1,5 @@
 ﻿using KpiV3.Domain.Employees.Commands;
+using KpiV3.Domain.SpecialtyChoices.Commands;
 using KpiV3.WebApi.Converters;
 using KpiV3.WebApi.DataContracts.Employees;
 using KpiV3.WebApi.Extensions;
@@ -50,6 +51,16 @@ public class EmployeeController : ControllerBase
     {
         return await _mediator
             .Send(new ResetPasswordCommand { EmployeeId = employeeId })
+            .MatchAsync(() => Ok(), error => error.MapToActionResult());
+    }
+
+    [HttpPost("allow-specialty-change")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> AllowSpecialtyChangeAsync([FromBody] AllowSpecialtyChangeRequest request)
+    {
+        return await _mediator
+            .Send(request.ToCommand())
             .MatchAsync(() => Ok(), error => error.MapToActionResult());
     }
 }
