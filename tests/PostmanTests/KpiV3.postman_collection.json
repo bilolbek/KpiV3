@@ -76,7 +76,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/position?pageNumber=1&pageSize=10",
+							"raw": "{{host}}/api/{{version}}/position?pageNumber=1&pageSize=5",
 							"host": [
 								"{{host}}"
 							],
@@ -92,7 +92,7 @@
 								},
 								{
 									"key": "pageSize",
-									"value": "10"
+									"value": "5"
 								}
 							]
 						}
@@ -223,7 +223,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"admin@kpi.com\",\r\n    \"password\": \"n0yb7m7l\"\r\n}",
+							"raw": "{\r\n    \"email\": \"admin@kpi.com\",\r\n    \"password\": \"vheawahd\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -626,7 +626,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Dean 2.0\",\r\n    \"description\": \"Super dean. Does dean stuff...\",\r\n    \"positionId\": \"{{dean_position_id}}\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Admin\",\r\n    \"description\": \"Super dean. Does dean stuff...\",\r\n    \"positionId\": \"{{dean_position_id}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -875,8 +875,30 @@
 				{
 					"name": "Get Indicator By Id",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/indicator/{{indicator_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"indicator",
+								"{{indicator_id}}"
+							]
+						}
 					},
 					"response": []
 				},
@@ -1007,7 +1029,7 @@
 					"response": []
 				},
 				{
-					"name": "Upload File",
+					"name": "Download File",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -1839,6 +1861,517 @@
 								"{{version}}",
 								"periodPart",
 								"{{period_part_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Requirements",
+			"item": [
+				{
+					"name": "Create Requirement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let requirementId = pm.response.json().id;\r",
+									"\r",
+									"pm.environment.set('requirement_id', requirementId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"periodPartId\": \"{{period_part_id}}\",\r\n    \"specialtyId\": \"{{specialty_id}}\",\r\n    \"indicatorId\": \"{{indicator_id}}\",\r\n    \"note\": \"2 штуки!\",\r\n    \"weight\": 10\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/{{version}}/requirement",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"requirement"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Requirement By Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/requirement/{{requirement_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"requirement",
+								"{{requirement_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Requirement",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"note\": \"2st\",\r\n    \"weight\": 5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/{{version}}/requirement/{{requirement_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"requirement",
+								"{{requirement_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Requirements By Period Id And Specialty Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/requirement/{{specialty_id}}/{{period_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"requirement",
+								"{{specialty_id}}",
+								"{{period_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Requirement",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/requirement/{{requirement_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"requirement",
+								"{{requirement_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Submissions",
+			"item": [
+				{
+					"name": "Create Submission",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let submissionId = pm.response.json().id;\r",
+									"\r",
+									"pm.environment.set('submission_id', submissionId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"requirementId\": \"{{requirement_id}}\",\r\n    \"fileId\": \"{{file_id}}\",\r\n    \"note\": \"Sdelal\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/{{version}}/submission",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"submission"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Submissions By Status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/submission?pageNumber=1&pageSize=10",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"submission"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "status",
+									"value": "0",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Submissions Of Employee For Requirement",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/submission/{{requirement_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"submission",
+								"{{requirement_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/submission/{{submission_id}}/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"submission",
+								"{{submission_id}}",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Grades",
+			"item": [
+				{
+					"name": "Create Grade",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"employeeId\": \"{{my_id}}\",\r\n    \"requirementId\": \"{{requirement_id}}\",\r\n    \"value\": \"5\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/{{version}}/grade",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"grade"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Grade",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"employeeId\": \"{{my_id}}\",\r\n    \"requirementId\": \"{{requirement_id}}\",\r\n    \"value\": \"10\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/{{version}}/grade",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"grade"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Own Grade",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/grade/{{requirement_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"grade",
+								"{{requirement_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Grade Of Someone Else (Root Only)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/grade/{{my_id}}/{{requirement_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"grade",
+								"{{my_id}}",
+								"{{requirement_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Calculate KPI",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/grade/kpi/{{my_id}}/{{period_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"grade",
+								"kpi",
+								"{{my_id}}",
+								"{{period_id}}"
 							]
 						}
 					},
