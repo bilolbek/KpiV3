@@ -1489,6 +1489,192 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "Period Parts",
+			"item": [
+				{
+					"name": "Create Period Part",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let periodPartId = pm.response.json().id;\r",
+									"\r",
+									"pm.environment.set('period_part_id', periodPartId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"First Half of 2021 Year\",\r\n    \"from\": \"2021-01-01T00:00:00.000Z\",\r\n    \"to\": \"2021-06-01T00:00:00.000Z\",\r\n    \"periodId\": \"{{period_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/{{version}}/periodPart",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"periodPart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Period Parts By Period Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/periodPart/by-period/{{period_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"periodPart",
+								"by-period",
+								"{{period_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Period Part By Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/periodPart/{{period_part_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"periodPart",
+								"{{period_part_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Period Part",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"First Half of 2021 Year\",\r\n    \"from\": \"2021-01-01T00:00:00.000Z\",\r\n    \"to\": \"2021-06-30T00:00:00.000Z\",\r\n    \"periodId\": \"{{period_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/{{version}}/periodPart/{{period_part_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"periodPart",
+								"{{period_part_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Period Part",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/periodPart/{{period_part_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"periodPart",
+								"{{period_part_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
