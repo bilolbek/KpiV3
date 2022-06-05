@@ -1,4 +1,5 @@
 ﻿using KpiV3.WebApi.HostedServices.DataInitialization.Extensions;
+using KpiV3.WebApi.HostedServices.FileStorageInitialization;
 
 namespace KpiV3.WebApi.HostedServices.Extensions;
 
@@ -9,6 +10,7 @@ public static class DependencyInjectionExtensions
         IConfiguration configuration)
     {
         return services
-            .AddDataInitializationService(configuration);
+            .AddDataInitializationService(configuration)
+            .AddHostedService<FileStorageInitializationService>();
     }
 }

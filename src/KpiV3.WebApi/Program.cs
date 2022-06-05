@@ -1,6 +1,7 @@
 using KpiV3.Domain;
 using KpiV3.Infrastructure;
 using KpiV3.WebApi.Authentication.Extensions;
+using KpiV3.WebApi.Extensions;
 using KpiV3.WebApi.HostedServices.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +29,7 @@ services.AddAuthorization(options =>
 });
 
 services
+    .AddDomainServices()
     .AddAdapters(configuration, builder.Environment)
     .AddMediatR(DomainAssembly.Instance, InfrastructureAssembly.Instance)
     .AddJwt(configuration)

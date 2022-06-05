@@ -29,11 +29,28 @@ services:
       - DataInitialization__RetryCount=5
       - DataInitialization__RetryWait=00:00:10
 
+      - S3__AccessKey=minio_user
+      - S3__SecretKey=minio_pass
+      - S3__Bucket=kpi
+      - S3__Endpoint=http://minio:9000
+
     ports:
       - 5000:5000
 
     depends_on:
       - database
+
+  minio:
+    image: minio/minio:RELEASE.2021-10-23T03-28-24Z.hotfix.f7ed7b98e
+    command: server /data --console-address ":9001"
+    container_name: minio
+    hostname: minio
+    environment:
+      - MINIO_ROOT_USER=minio_user
+      - MINIO_ROOT_PASSWORD=minio_pass
+    ports:
+      - 9000:9000
+      - 9001:9001
 
   database:
     image: postgres
