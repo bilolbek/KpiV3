@@ -13,7 +13,7 @@ namespace KpiV3.WebApi.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/v{version:apiVersion}/[controller]")]
+[Route("api/[controller]")]
 [ApiVersion("3.0")]
 public class SubmissionController : ControllerBase
 {

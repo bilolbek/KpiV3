@@ -15,13 +15,7 @@ services.AddHttpContextAccessor();
 services.AddControllers();
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
-services.AddApiVersioning(o =>
-{
-    o.AssumeDefaultVersionWhenUnspecified = false;
-    o.DefaultApiVersion = new ApiVersion(3, 0);
-    o.ReportApiVersions = true;
-    o.ApiVersionReader = new UrlSegmentApiVersionReader();
-});
+
 services.AddAuthorization(options =>
 {
     options.AddPolicy("RootOnly",

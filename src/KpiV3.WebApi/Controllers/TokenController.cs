@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace KpiV3.WebApi.Controllers;
 
 [ApiController]
-[Route("api/v{version:apiVersion}/[controller]")]
+[Route("api/[controller]")]
 public class TokenController : ControllerBase
 {
     private readonly IJwtTokenProvider _tokenProvider;

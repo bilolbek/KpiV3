@@ -12,8 +12,7 @@ namespace KpiV3.WebApi.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/v{version:apiVersion}/[controller]")]
-[ApiVersion("3.0")]
+[Route("api/[controller]")]
 public class CommentController : ControllerBase
 {
     private readonly IMediator _mediator;

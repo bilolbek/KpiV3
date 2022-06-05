@@ -10,7 +10,7 @@ namespace KpiV3.WebApi.Controllers;
 
 [Authorize(Policy = "RootOnly")]
 [ApiController]
-[Route("api/v{version:apiVersion}/[controller]")]
+[Route("api/[controller]")]
 [ApiVersion("3.0")]
 public class PeriodPartController : ControllerBase
 {
