@@ -23,7 +23,7 @@ public class RequirementController : ControllerBase
     }
 
     [Authorize(Policy = "RootOnly")]
-    [HttpGet("for-employee/{employeeId:guid}/{period:guid}")]
+    [HttpGet("for-employee/{employeeId:guid}/{periodId:guid}")]
     [ProducesResponseType(200, Type = typeof(List<RequirementDto>))]
     public async Task<IActionResult> GetRequriementsOfEmployeeAsync(Guid employeeId, Guid periodId)
     {
