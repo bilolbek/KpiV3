@@ -40,6 +40,7 @@ public class UpdatePostCommandHandler : IRequestHandler<UpdatePostCommand, Resul
         return await _postRepository
             .FindByIdAsync(request.PostId)
             .BindAsync(post => post.CanBeModifiedBy(request.IdOfWhoWantsToEdit))
+            .MapAsync(p => p with { Title = request.Title, Content = request.Content })
             .BindAsync(post => _postRepository
                 .UpdateAsync(post)
                 .InsertSuccessAsync(() => _employeeRepository

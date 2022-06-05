@@ -1,4 +1,5 @@
-﻿using KpiV3.Domain.Employees.Commands;
+﻿using KpiV3.Domain.DataContracts.Models;
+using KpiV3.Domain.Employees.Commands;
 using KpiV3.Domain.SpecialtyChoices.Commands;
 using KpiV3.WebApi.Converters;
 using KpiV3.WebApi.DataContracts.Employees;
@@ -20,6 +21,16 @@ public class EmployeeController : ControllerBase
     public EmployeeController(IMediator mediator)
     {
         _mediator = mediator;
+    }
+
+    [HttpGet]
+    [ProducesResponseType(200, Type = typeof(Page<ProfileDto>))]
+    public async Task<IActionResult> GetAsync([FromQuery] GetEmployeesRequest request)
+    {
+        return await _mediator
+            .Send(request.ToQuery())
+            .MapAsync(x => x.Map(x => new ProfileDto(x)))
+            .MatchAsync(x => Ok(x), error => error.MapToActionResult());
     }
 
     [HttpPost]

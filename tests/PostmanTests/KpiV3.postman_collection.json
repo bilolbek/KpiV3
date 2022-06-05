@@ -47,13 +47,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/position",
+							"raw": "{{host}}/api/position",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"position"
 							]
 						}
@@ -76,13 +75,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/position?pageNumber=1&pageSize=5",
+							"raw": "{{host}}/api/position?pageNumber=1&pageSize=5",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"position"
 							],
 							"query": [
@@ -115,13 +113,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/position/{{dean_position_id}}",
+							"raw": "{{host}}/api/position/{{dean_position_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"position",
 								"{{dean_position_id}}"
 							]
@@ -154,13 +151,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/position/{{dean_position_id}}",
+							"raw": "{{host}}/api/position/{{dean_position_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"position",
 								"{{dean_position_id}}"
 							]
@@ -184,13 +180,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/position/{{dean_position_id}}",
+							"raw": "{{host}}/api/position/{{dean_position_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"position",
 								"{{dean_position_id}}"
 							]
@@ -231,13 +226,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/token",
+							"raw": "{{host}}/api/token",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"token"
 							]
 						}
@@ -274,13 +268,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/employee",
+							"raw": "{{host}}/api/employee",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"employee"
 							]
 						}
@@ -313,13 +306,12 @@
 							]
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/employee/import",
+							"raw": "{{host}}/api/employee/import",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"employee",
 								"import"
 							]
@@ -352,13 +344,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/employee/allow-specialty-change",
+							"raw": "{{host}}/api/employee/allow-specialty-change",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"employee",
 								"allow-specialty-change"
 							]
@@ -382,13 +373,12 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/employee/reset-password/{{my_id}}",
+							"raw": "{{host}}/api/employee/reset-password/{{my_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"employee",
 								"reset-password",
 								"{{my_id}}"
@@ -469,13 +459,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/period?pageNumber=1&pageSize=10",
+							"raw": "{{host}}/api/period?pageNumber=1&pageSize=10",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"period"
 							],
 							"query": [
@@ -508,13 +497,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/period/{{period_id}}",
+							"raw": "{{host}}/api/period/{{period_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"period",
 								"{{period_id}}"
 							]
@@ -547,13 +535,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/period/{{period_id}}",
+							"raw": "{{host}}/api/period/{{period_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"period",
 								"{{period_id}}"
 							]
@@ -577,13 +564,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/period/{{period_id}}",
+							"raw": "{{host}}/api/period/{{period_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"period",
 								"{{period_id}}"
 							]
@@ -634,13 +620,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/specialty",
+							"raw": "{{host}}/api/specialty",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"specialty"
 							]
 						}
@@ -663,13 +648,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/specialty/by-position/{{dean_position_id}}",
+							"raw": "{{host}}/api/specialty/by-position/{{dean_position_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"specialty",
 								"by-position",
 								"{{dean_position_id}}"
@@ -694,13 +678,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/specialty/{{specialty_id}}",
+							"raw": "{{host}}/api/specialty/{{specialty_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"specialty",
 								"{{specialty_id}}"
 							]
@@ -733,13 +716,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/specialty/{{specialty_id}}",
+							"raw": "{{host}}/api/specialty/{{specialty_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"specialty",
 								"{{specialty_id}}"
 							]
@@ -763,13 +745,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/specialty/{{specialty_id}}",
+							"raw": "{{host}}/api/specialty/{{specialty_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"specialty",
 								"{{specialty_id}}"
 							]
@@ -820,13 +801,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/indicator",
+							"raw": "{{host}}/api/indicator",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"indicator"
 							]
 						}
@@ -849,13 +829,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/indicator?pageNumber=1&pageSize=10",
+							"raw": "{{host}}/api/indicator?pageNumber=1&pageSize=10",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"indicator"
 							],
 							"query": [
@@ -888,13 +867,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/indicator/{{indicator_id}}",
+							"raw": "{{host}}/api/indicator/{{indicator_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"indicator",
 								"{{indicator_id}}"
 							]
@@ -927,13 +905,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/indicator/{{indicator_id}}",
+							"raw": "{{host}}/api/indicator/{{indicator_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"indicator",
 								"{{indicator_id}}"
 							]
@@ -957,13 +934,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/indicator/{{indicator_id}}",
+							"raw": "{{host}}/api/indicator/{{indicator_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"indicator",
 								"{{indicator_id}}"
 							]
@@ -1015,13 +991,12 @@
 							]
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/file",
+							"raw": "{{host}}/api/file",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"file"
 							]
 						}
@@ -1044,13 +1019,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/file/{{file_id}}",
+							"raw": "{{host}}/api/file/{{file_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"file",
 								"{{file_id}}"
 							]
@@ -1099,13 +1073,12 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/profile",
+							"raw": "{{host}}/api/profile",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"profile"
 							]
 						}
@@ -1137,13 +1110,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/profile",
+							"raw": "{{host}}/api/profile",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"profile"
 							]
 						}
@@ -1175,13 +1147,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/profile/change-password",
+							"raw": "{{host}}/api/profile/change-password",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"profile",
 								"change-password"
 							]
@@ -1205,13 +1176,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/profile/specialty/{{period_id}}",
+							"raw": "{{host}}/api/profile/specialty/{{period_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"profile",
 								"specialty",
 								"{{period_id}}"
@@ -1245,13 +1215,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/profile/specialty",
+							"raw": "{{host}}/api/profile/specialty",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"profile",
 								"specialty"
 							]
@@ -1306,13 +1275,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/post",
+							"raw": "{{host}}/api/post",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"post"
 							]
 						}
@@ -1335,13 +1303,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/post?pageNumber=1&pageSize=10",
+							"raw": "{{host}}/api/post?pageNumber=1&pageSize=10",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"post"
 							],
 							"query": [
@@ -1374,13 +1341,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/post/{{post_id}}",
+							"raw": "{{host}}/api/post/{{post_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"post",
 								"{{post_id}}"
 							]
@@ -1390,9 +1356,6 @@
 				},
 				{
 					"name": "Update Post",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -1404,11 +1367,11 @@
 								}
 							]
 						},
-						"method": "GET",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Reminder!\",\r\n    \"content\": \"Send your reports ASAP please!\"\r\n}",
+							"raw": "{\r\n    \"title\": \"Reminder!\",\r\n    \"content\": \"Sends your reports ASAP please!\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1416,13 +1379,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/post/{{post_id}}",
+							"raw": "{{host}}/api/post/{{post_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"post",
 								"{{post_id}}"
 							]
@@ -1446,13 +1408,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/post/{{post_id}}",
+							"raw": "{{host}}/api/post/{{post_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"post",
 								"{{post_id}}"
 							]
@@ -1503,13 +1464,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/comment",
+							"raw": "{{host}}/api/comment",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"comment"
 							]
 						}
@@ -1532,13 +1492,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/comment/block/{{post_comment_block_id}}/?pageNumber=1&pageSize=10",
+							"raw": "{{host}}/api/comment/block/{{post_comment_block_id}}/?pageNumber=1&pageSize=10",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"comment",
 								"block",
 								"{{post_comment_block_id}}",
@@ -1574,13 +1533,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/comment/{{comment_id}}",
+							"raw": "{{host}}/api/comment/{{comment_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"comment",
 								"{{comment_id}}"
 							]
@@ -1613,13 +1571,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/comment/{{comment_id}}",
+							"raw": "{{host}}/api/comment/{{comment_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"comment",
 								"{{comment_id}}"
 							]
@@ -1643,13 +1600,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/comment/{{comment_id}}",
+							"raw": "{{host}}/api/comment/{{comment_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"comment",
 								"{{comment_id}}"
 							]
@@ -1723,13 +1679,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/periodPart",
+							"raw": "{{host}}/api/periodPart",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"periodPart"
 							]
 						}
@@ -1752,13 +1707,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/periodPart/by-period/{{period_id}}",
+							"raw": "{{host}}/api/periodPart/by-period/{{period_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"periodPart",
 								"by-period",
 								"{{period_id}}"
@@ -1783,13 +1737,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/periodPart/{{period_part_id}}",
+							"raw": "{{host}}/api/periodPart/{{period_part_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"periodPart",
 								"{{period_part_id}}"
 							]
@@ -1822,13 +1775,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/periodPart/{{period_part_id}}",
+							"raw": "{{host}}/api/periodPart/{{period_part_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"periodPart",
 								"{{period_part_id}}"
 							]
@@ -1852,13 +1804,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/periodPart/{{period_part_id}}",
+							"raw": "{{host}}/api/periodPart/{{period_part_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"periodPart",
 								"{{period_part_id}}"
 							]
@@ -1909,13 +1860,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/requirement",
+							"raw": "{{host}}/api/requirement",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"requirement"
 							]
 						}
@@ -1938,13 +1888,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/requirement/{{requirement_id}}",
+							"raw": "{{host}}/api/requirement/{{requirement_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"requirement",
 								"{{requirement_id}}"
 							]
@@ -1977,13 +1926,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/requirement/{{requirement_id}}",
+							"raw": "{{host}}/api/requirement/{{requirement_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"requirement",
 								"{{requirement_id}}"
 							]
@@ -2007,13 +1955,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/requirement/{{specialty_id}}/{{period_id}}",
+							"raw": "{{host}}/api/requirement/{{specialty_id}}/{{period_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"requirement",
 								"{{specialty_id}}",
 								"{{period_id}}"
@@ -2038,13 +1985,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/requirement/{{requirement_id}}",
+							"raw": "{{host}}/api/requirement/{{requirement_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"requirement",
 								"{{requirement_id}}"
 							]
@@ -2095,13 +2041,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/submission",
+							"raw": "{{host}}/api/submission",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"submission"
 							]
 						}
@@ -2124,13 +2069,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/submission?pageNumber=1&pageSize=10",
+							"raw": "{{host}}/api/submission?pageNumber=1&pageSize=10",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"submission"
 							],
 							"query": [
@@ -2168,13 +2112,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/submission/{{requirement_id}}",
+							"raw": "{{host}}/api/submission/{{requirement_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"submission",
 								"{{requirement_id}}"
 							]
@@ -2198,13 +2141,12 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/submission/{{submission_id}}/1",
+							"raw": "{{host}}/api/submission/{{submission_id}}/1",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"submission",
 								"{{submission_id}}",
 								"1"
@@ -2243,13 +2185,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/grade",
+							"raw": "{{host}}/api/grade",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"grade"
 							]
 						}
@@ -2281,13 +2222,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/{{version}}/grade",
+							"raw": "{{host}}/api/grade",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"grade"
 							]
 						}
@@ -2300,13 +2240,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/grade/{{requirement_id}}",
+							"raw": "{{host}}/api/grade/{{requirement_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"grade",
 								"{{requirement_id}}"
 							]
@@ -2330,13 +2269,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/grade/{{my_id}}/{{requirement_id}}",
+							"raw": "{{host}}/api/grade/{{my_id}}/{{requirement_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"grade",
 								"{{my_id}}",
 								"{{requirement_id}}"
@@ -2361,13 +2299,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/api/{{version}}/grade/kpi/{{my_id}}/{{period_id}}",
+							"raw": "{{host}}/api/grade/kpi/{{my_id}}/{{period_id}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"{{version}}",
 								"grade",
 								"kpi",
 								"{{my_id}}",

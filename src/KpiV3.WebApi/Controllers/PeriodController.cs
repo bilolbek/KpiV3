@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KpiV3.WebApi.Controllers;
 
-[Authorize(Policy = "RootOnly")]
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 [ApiVersion("3.0")]
@@ -22,6 +22,18 @@ public class PeriodController : ControllerBase
         _mediator = mediator;
     }
 
+    [HttpGet("active")]
+    [ProducesResponseType(200, Type = typeof(PeriodDto))]
+    public async Task<IActionResult> GetActiveAsync()
+    {
+        return await _mediator
+            .Send(new GetActivePeriodQuery())
+            .MapAsync(p => new PeriodDto(p))
+            .MatchAsync(p => Ok(p), error => error.MapToActionResult());
+    }
+
+
+    [Authorize(Policy = "RootOnly")]
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(Page<PeriodDto>))]
     [ProducesResponseType(400)]
@@ -33,6 +45,7 @@ public class PeriodController : ControllerBase
             .MatchAsync(periods => Ok(periods), error => error.MapToActionResult());
     }
 
+    [Authorize(Policy = "RootOnly")]
     [HttpGet("{periodId:guid}")]
     [ProducesResponseType(200, Type = typeof(PeriodDto))]
     [ProducesResponseType(404)]
@@ -44,6 +57,7 @@ public class PeriodController : ControllerBase
             .MatchAsync(period => Ok(period), error => error.MapToActionResult());
     }
 
+    [Authorize(Policy = "RootOnly")]
     [HttpPost]
     [ProducesResponseType(200, Type = typeof(Page<PeriodDto>))]
     [ProducesResponseType(400)]
@@ -55,6 +69,7 @@ public class PeriodController : ControllerBase
             .MatchAsync(period => Ok(period), error => error.MapToActionResult());
     }
 
+    [Authorize(Policy = "RootOnly")]
     [HttpPut("{periodId:guid}")]
     [ProducesResponseType(200, Type = typeof(Page<PeriodDto>))]
     [ProducesResponseType(400)]
@@ -67,6 +82,7 @@ public class PeriodController : ControllerBase
             .MatchAsync(period => Ok(period), error => error.MapToActionResult());
     }
 
+    [Authorize(Policy = "RootOnly")]
     [HttpDelete("{periodId:guid}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
