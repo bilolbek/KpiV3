@@ -698,6 +698,178 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Indicators",
+			"item": [
+				{
+					"name": "Create Indicator",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let indicatorId = pm.response.json().id;\r",
+									"\r",
+									"pm.environment.set('indicator_id', indicatorId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Статья\",\r\n    \"description\": \"Статья*, имеющая тип ...\",\r\n    \"comment\": \"Статья/монография в соавторстве для данной...\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/{{version}}/indicator",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"indicator"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Indicators",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/indicator?pageNumber=1&pageSize=10",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"indicator"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Indicator By Id",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Update Indicator",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Статья\",\r\n    \"description\": \"Статья*, имеющая тип \\\"Статья\\\" ...\",\r\n    \"comment\": \"Статья/монография в соавторстве для данной категории считается только...\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/{{version}}/indicator/{{indicator_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"indicator",
+								"{{indicator_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Indicator",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/{{version}}/indicator/{{indicator_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"{{version}}",
+								"indicator",
+								"{{indicator_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

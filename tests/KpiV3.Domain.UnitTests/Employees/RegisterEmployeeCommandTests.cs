@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
+using KpiV3.Domain.Common;
 using KpiV3.Domain.DataContracts.Models;
 using KpiV3.Domain.Employees.Commands;
 using KpiV3.Domain.Employees.DataContracts;
 using KpiV3.Domain.Employees.Ports;
-using KpiV3.Domain.Ports;
 using Moq;
 
 namespace KpiV3.Domain.UnitTests.Employees;

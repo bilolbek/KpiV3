@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
+using KpiV3.Domain.Common;
 using KpiV3.Domain.Periods.Commands;
 using KpiV3.Domain.Periods.DataContracts;
 using KpiV3.Domain.Periods.Ports;
-using KpiV3.Domain.Ports;
 using Moq;
 
 namespace KpiV3.Domain.UnitTests.Periods;

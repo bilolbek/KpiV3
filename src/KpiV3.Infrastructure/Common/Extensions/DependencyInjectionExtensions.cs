@@ -1,4 +1,4 @@
-﻿using KpiV3.Domain.Ports;
+﻿using KpiV3.Domain.Common;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace KpiV3.Infrastructure.Common.Extensions;

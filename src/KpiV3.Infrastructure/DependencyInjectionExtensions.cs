@@ -1,6 +1,7 @@
 ﻿using KpiV3.Infrastructure.Common.Extensions;
 using KpiV3.Infrastructure.Data.Extensions;
 using KpiV3.Infrastructure.Employees.Extensions;
+using KpiV3.Infrastructure.Indicators.Extensions;
 using KpiV3.Infrastructure.Periods.Extensions;
 using KpiV3.Infrastructure.Positions.Extensions;
 using KpiV3.Infrastructure.Specialties.Extensions;
@@ -23,6 +24,7 @@ public static class DependencyInjectionExtensions
             .AddEmployeeAdapters(configuration, environment)
             .AddPositionAdapters()
             .AddPeriodAdapters()
-            .AddSpecialtyAdapters();
+            .AddSpecialtyAdapters()
+            .AddIndicatorAdapters();
     }
 }

@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using KpiV3.Domain.Ports;
+using KpiV3.Domain.Common;
 using KpiV3.Domain.Positions.Commands;
 using KpiV3.Domain.Positions.DataContracts;
 using KpiV3.Domain.Positions.Ports;

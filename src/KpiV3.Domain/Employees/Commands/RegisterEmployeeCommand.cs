@@ -1,7 +1,7 @@
-﻿using KpiV3.Domain.DataContracts.Models;
+﻿using KpiV3.Domain.Common;
+using KpiV3.Domain.DataContracts.Models;
 using KpiV3.Domain.Employees.DataContracts;
 using KpiV3.Domain.Employees.Ports;
-using KpiV3.Domain.Ports;
 using MediatR;
 
 namespace KpiV3.Domain.Employees.Commands;

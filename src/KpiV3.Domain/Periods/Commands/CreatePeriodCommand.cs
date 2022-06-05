@@ -1,7 +1,6 @@
 ﻿using KpiV3.Domain.Common;
 using KpiV3.Domain.Periods.DataContracts;
 using KpiV3.Domain.Periods.Ports;
-using KpiV3.Domain.Ports;
 using MediatR;
 
 namespace KpiV3.Domain.Periods.Commands;
