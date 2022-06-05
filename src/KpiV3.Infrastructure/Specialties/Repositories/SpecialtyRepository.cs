@@ -40,4 +40,15 @@ WHERE id = @specialtyId";
 
         return await _db.ExecuteRequiredChangeAsync<Specialty>(new(sql, new { specialtyId }));
     }
+
+    public async Task<Result<List<Specialty>, IError>> FindByPositionIdAsync(Guid positionId)
+    {
+        const string sql = @"
+SELECT * FROM specialties
+WHERE position_id = @positionId";
+
+        return await _db
+            .QueryAsync<SpecialtyRow>(new(sql, new { positionId }))
+            .MapAsync(rows => rows.Select(row => row.ToModel()).ToList());
+    }
 }
