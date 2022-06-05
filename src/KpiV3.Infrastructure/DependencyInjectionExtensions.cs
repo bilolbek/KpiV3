@@ -1,10 +1,12 @@
-﻿using KpiV3.Infrastructure.Common.Extensions;
+﻿using KpiV3.Infrastructure.Comments.Extensions;
+using KpiV3.Infrastructure.Common.Extensions;
 using KpiV3.Infrastructure.Data.Extensions;
 using KpiV3.Infrastructure.Employees.Extensions;
 using KpiV3.Infrastructure.Files.Extensions;
 using KpiV3.Infrastructure.Indicators.Extensions;
 using KpiV3.Infrastructure.Periods.Extensions;
 using KpiV3.Infrastructure.Positions.Extensions;
+using KpiV3.Infrastructure.Posts.Extensions;
 using KpiV3.Infrastructure.Specialties.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +29,8 @@ public static class DependencyInjectionExtensions
             .AddPeriodAdapters()
             .AddSpecialtyAdapters()
             .AddIndicatorAdapters()
-            .AddFileAdapters(configuration);
+            .AddFileAdapters(configuration)
+            .AddCommentAdapters()
+            .AddPostAdapters();
     }
 }

@@ -42,4 +42,14 @@ public class EmployeeController : ControllerBase
             .BindAsync(command => _mediator.Send(command))
             .MatchAsync(() => Ok(), error => error.MapToActionResult());
     }
+
+    [HttpPost("reset-password/{employeeId:guid}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> ResetPasswordAsync(Guid employeeId)
+    {
+        return await _mediator
+            .Send(new ResetPasswordCommand { EmployeeId = employeeId })
+            .MatchAsync(() => Ok(), error => error.MapToActionResult());
+    }
 }

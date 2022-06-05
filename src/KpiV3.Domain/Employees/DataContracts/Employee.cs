@@ -11,6 +11,7 @@ public record Employee
     public string PasswordHash { get; set; } = default!;
 
     public Guid PositionId { get; set; }
+    public Guid? AvatarId { get; set; }
 
     public DateTimeOffset RegistrationDate { get; set; }
 }

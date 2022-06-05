@@ -19,6 +19,7 @@ internal class EmployeeRow
         PasswordHash = employee.PasswordHash;
         PositionId = employee.PositionId;
         RegDate = employee.RegistrationDate;
+        AvatarId = employee.AvatarId;
     }
 
     public Guid Id { get; set; }
@@ -33,6 +34,7 @@ internal class EmployeeRow
     public Guid PositionId { get; set; }
 
     public DateTimeOffset RegDate { get; set; }
+    public Guid? AvatarId { get; set; }
 
     public Employee ToModel()
     {
@@ -49,6 +51,7 @@ internal class EmployeeRow
             PasswordHash = new(PasswordHash),
             PositionId = PositionId,
             RegistrationDate = RegDate,
+            AvatarId = AvatarId,
         };
     }
 }

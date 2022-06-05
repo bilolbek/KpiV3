@@ -1,12 +1,7 @@
 ﻿using FluentAssertions;
 using KpiV3.Domain.Positions.DataContracts;
 using KpiV3.WebApi.DataContracts.Periods;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KpiV3.FunctionalTests.Periods;
 
