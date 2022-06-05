@@ -16,6 +16,8 @@ public static class ErrorMappingExtensions
 
             UnauthorizedAccess => new UnauthorizedResult(),
 
+            ForbidenAction => new ForbidResult(),
+
             _ => new ObjectResult(ToModel(error))
             {
                 StatusCode = 500,

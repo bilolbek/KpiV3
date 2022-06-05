@@ -9,6 +9,7 @@ public static class DependencyInjectionExtensions
     {
         return services
             .AddTransient<IGuidProvider, GuidProvider>()
-            .AddTransient<IDateProvider, DateProvider>();
+            .AddTransient<IDateProvider, DateProvider>()
+            .AddTransient<ITransactionProvider, TransactionProvider>();
     }
 }

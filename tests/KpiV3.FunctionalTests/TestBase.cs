@@ -3,6 +3,7 @@ using KpiV3.Domain.Periods.Ports;
 using KpiV3.Domain.Positions.Ports;
 using KpiV3.FunctionalTests.Fakes;
 using KpiV3.WebApi.HostedServices.DataInitialization;
+using KpiV3.WebApi.HostedServices.FileStorageInitialization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
@@ -45,6 +46,7 @@ public abstract class TestBase
             host.ConfigureServices((context, services) =>
             {
                 services.Remove(services.First(d => d.ImplementationType == typeof(DataInitializationService)));
+                services.Remove(services.First(d => d.ImplementationType == typeof(FileStorageInitializationService)));
 
                 ConfigureServices(services);
             });

@@ -19,6 +19,11 @@ internal class Database
     {
         try
         {
+            if (_connection.State != ConnectionState.Open)
+            {
+                await _connection.OpenAsync();
+            }
+
             await using var transaction = await _connection.BeginTransactionAsync();
 
             return await action()

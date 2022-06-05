@@ -22,9 +22,24 @@ public class InMemoryEmployeeRepository : IEmployeeRepository
         return Task.FromResult(Result<Employee, IError>.Fail(new NoEntity(typeof(Employee))));
     }
 
+    public Task<Result<Employee, IError>> FindByIdAsync(Guid employeeId)
+    {
+        if (Items.TryGetValue(employeeId, out var employee))
+        {
+            return Task.FromResult(Result<Employee, IError>.Ok(employee));
+        }
+
+        return Task.FromResult(Result<Employee, IError>.Fail(new NoEntity(typeof(Employee))));
+    }
+
     public Task<Result<IError>> InsertAsync(Employee employee)
     {
         Items[employee.Id] = employee;
         return Task.FromResult(Result<IError>.Ok());
+    }
+
+    public Task<Result<IError>> UpdateAsync(Employee employee)
+    {
+        throw new NotImplementedException();
     }
 }
