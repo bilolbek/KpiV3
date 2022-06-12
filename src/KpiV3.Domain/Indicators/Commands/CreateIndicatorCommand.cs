@@ -1,5 +1,6 @@
 ﻿using KpiV3.Domain.Indicators.DataContracts;
 using MediatR;
+using System.ComponentModel.DataAnnotations;
 
 namespace KpiV3.Domain.Indicators.Commands;
 

@@ -67,6 +67,9 @@ public class GetAdminTasklistQueryHandler : IRequestHandler<GetAdminTasklistQuer
                     .Where(r => r.SpecialtyId == e.SpecialtyId &&
                                 r.PeriodPart.PeriodId == request.PeriodId)
                     .Sum(r => r.Weight) : 0,
+                RequirementsCount = e.SpecialtyId.HasValue ? _db.Requirements
+                    .Count(r => r.SpecialtyId == e.SpecialtyId &&
+                                r.PeriodPart.PeriodId == request.PeriodId) : 0,
             })
             .ToPageAsync(request.Pagination, cancellationToken);
     }

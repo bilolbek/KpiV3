@@ -19,7 +19,7 @@ public class AdminTasklistController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAsync(GetAdminTasklistRequest request)
+    public async Task<IActionResult> GetAsync([FromQuery] GetAdminTasklistRequest request)
     {
         return Ok(await _mediator.Send(request.ToQuery()));
     }

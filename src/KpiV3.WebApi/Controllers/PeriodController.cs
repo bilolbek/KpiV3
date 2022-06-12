@@ -29,6 +29,14 @@ public class PeriodController : ControllerBase
         return Ok(periods.Map(p => new PeriodDto(p)));
     }
 
+    [HttpGet("active")]
+    public async Task<IActionResult> GetActiveAsync()
+    {
+        var period = await _mediator.Send(new GetActivePeriodQuery());
+
+        return Ok(new PeriodDto(period));
+    }
+
     [HttpGet("{period:guid}")]
     [ProducesResponseType(200, Type = typeof(PeriodDto))]
     [ProducesResponseType(404)]

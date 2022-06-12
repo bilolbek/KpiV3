@@ -6,7 +6,7 @@ namespace KpiV3.Domain.Submissions.Commands;
 public record DeleteSubmissionCommand : IRequest
 {
     public Guid SubmissionId { get; init; }
-    public Guid EmployeeId { get; init; }
+    public Guid IdOfWhoWantsToDelete { get; init; }
 }
 
 public class DeleteSubmissionCommandHandler : AsyncRequestHandler<DeleteSubmissionCommand>
@@ -28,8 +28,8 @@ public class DeleteSubmissionCommandHandler : AsyncRequestHandler<DeleteSubmissi
             .FindAsync(new object?[] { request.SubmissionId }, cancellationToken: cancellationToken)
             .EnsureFoundAsync();
 
-        if (submission.EmployeeId == request.EmployeeId ||
-            await _employeePositionService.EmployeeHasRootPositionAsync(request.EmployeeId, cancellationToken))
+        if (submission.EmployeeId == request.IdOfWhoWantsToDelete ||
+            await _employeePositionService.EmployeeHasRootPositionAsync(request.IdOfWhoWantsToDelete, cancellationToken))
         {
             _db.Submissions.Remove(submission);
         }

@@ -4,20 +4,20 @@ using MediatR;
 
 namespace KpiV3.Domain.Grades.Commands;
 
-public record CreateGradeCommand : IRequest
+public record PutGradeCommand : IRequest
 {
     public Guid EmployeeId { get; init; }
     public Guid RequirementId { get; init; }
     public double Value { get; init; }
 }
 
-public class CreateGradeCommandHandler : AsyncRequestHandler<CreateGradeCommand>
+public class PutGradeCommandHandler : AsyncRequestHandler<PutGradeCommand>
 {
     private readonly KpiContext _db;
     private readonly IDateProvider _dateProvider;
     private readonly GradeValidationService _gradeValidationService;
 
-    public CreateGradeCommandHandler(
+    public PutGradeCommandHandler(
         KpiContext db,
         IDateProvider dateProvider,
         GradeValidationService gradeValidationService)
@@ -27,21 +27,34 @@ public class CreateGradeCommandHandler : AsyncRequestHandler<CreateGradeCommand>
         _gradeValidationService = gradeValidationService;
     }
 
-    protected override async Task Handle(CreateGradeCommand request, CancellationToken cancellationToken)
+    protected override async Task Handle(PutGradeCommand request, CancellationToken cancellationToken)
     {
         await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
 
-        var grade = new Grade
+        var grade = await _db.Grades.FirstOrDefaultAsync(g =>
+            g.EmployeeId == request.EmployeeId &&
+            g.RequirementId == request.RequirementId, cancellationToken);
+
+        if (grade is null)
         {
-            EmployeeId = request.EmployeeId,
-            RequirementId = request.RequirementId,
-            Value = request.Value,
-            GradedDate = _dateProvider.Now(),
-        };
+            grade = new Grade
+            {
+                EmployeeId = request.EmployeeId,
+                RequirementId = request.RequirementId,
+                Value = request.Value,
+                GradedDate = _dateProvider.Now(),
+            };
+
+            _db.Grades.Add(grade);
+        }
+        else
+        {
+            grade.Value = request.Value;
+        }
 
         await _gradeValidationService.ValidateGradeAsync(grade, cancellationToken);
 
-        _db.Grades.Add(grade);
+        await _db.SaveChangesAsync(cancellationToken);
 
         await transaction.CommitAsync(cancellationToken);
     }

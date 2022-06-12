@@ -7,6 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Grades\Queries\**" />
+	  <EmbeddedResource Remove="Grades\Queries\**" />
+	  <None Remove="Grades\Queries\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="MediatR" Version="10.0.1" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.5" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.5" />
@@ -20,10 +26,5 @@
 		<Using Include="KpiV3.Domain.Common.Ports" />
 		
 		<Using Include="Microsoft.EntityFrameworkCore" />
-	</ItemGroup>
-
-
-	<ItemGroup>
-	  <Folder Include="Grades\Queries\" />
 	</ItemGroup>
 </Project>
