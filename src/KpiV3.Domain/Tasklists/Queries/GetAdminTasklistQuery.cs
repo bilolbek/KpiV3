@@ -1,5 +1,5 @@
 ﻿using KpiV3.Domain.Common.DataContracts;
-using KpiV3.Domain.Tasklist.DataContracts;
+using KpiV3.Domain.Tasklists.DataContracts;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KpiV3.Domain.Tasklist.Queries;
+namespace KpiV3.Domain.Tasklists.Queries;
 
 public record GetAdminTasklistQuery : IRequest<Page<AdminTasklistRow>>
 {

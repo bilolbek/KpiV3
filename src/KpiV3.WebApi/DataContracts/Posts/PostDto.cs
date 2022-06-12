@@ -9,6 +9,10 @@ public class PostDto
     {
         Id = post.Id;
         Author = new(post.Author);
+        Title = post.Title;
+        Content = post.Content;
+        CommentBlockId = post.CommentBlockId;
+        WrittenDate = post.WrittenDate;
     }
 
     public Guid Id { get; init; }

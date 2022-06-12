@@ -1,6 +1,6 @@
 ﻿using KpiV3.Domain.Common.DataContracts;
 
-namespace KpiV3.Domain.Tasklist.DataContracts;
+namespace KpiV3.Domain.Tasklists.DataContracts;
 
 public class AdminTasklistRow
 {
