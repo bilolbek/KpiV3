@@ -14,6 +14,6 @@ public record SpecialtyDto
 
     public Guid Id { get; init; }
     public string Name { get; init; } = default!;
-    public string Description { get; init; } = default!;
+    public string? Description { get; init; } = default!;
     public Guid PositionId { get; init; }
 }

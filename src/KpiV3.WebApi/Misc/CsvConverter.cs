@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 
-namespace KpiV3.WebApi.Converters;
+namespace KpiV3.WebApi.Misc;
 
 public static class CsvConverter
 {

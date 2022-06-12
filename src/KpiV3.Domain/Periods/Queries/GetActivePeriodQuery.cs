@@ -1,10 +1,5 @@
 ﻿using KpiV3.Domain.Periods.DataContracts;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KpiV3.Domain.Periods.Queries;
 
@@ -30,6 +25,7 @@ public class GetActivePeriodQueryHandler : IRequestHandler<GetActivePeriodQuery,
         var now = _dateProvider.Now();
 
         return await _db.Periods
-            .FirstOrDefaultAsync(p => now >= p.Range.From && now <= p.Range.To);
+            .FirstOrDefaultAsync(p => now >= p.Range.From && now <= p.Range.To, cancellationToken)
+            .EnsureFoundAsync();
     }
 }

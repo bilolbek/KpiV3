@@ -25,7 +25,6 @@ public class ChooseSpecialtyCommandHandler : AsyncRequestHandler<ChooseSpecialty
 
         var choice = await _db.SpecialtyChoices
             .FirstOrDefaultAsync(c =>
-                c.SpecialtyId == request.SpecialtyId &&
                 c.EmployeeId == request.EmployeeId &&
                 c.PeriodId == request.PeriodId, cancellationToken);
 
