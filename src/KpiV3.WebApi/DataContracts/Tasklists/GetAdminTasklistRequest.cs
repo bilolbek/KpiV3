@@ -15,10 +15,12 @@ public class GetAdminTasklistRequest
     [FromQuery]
     public int PageSize { get; set; }
 
-    public GetAdminTasklistQuery ToQuery()
+    public GetAdminTasklistQuery ToQuery(Guid periodId)
     {
         return new GetAdminTasklistQuery
         {
+            PeriodId = periodId,
+
             Pagination = new()
             {
                 PageNumber = PageNumber,

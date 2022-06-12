@@ -18,10 +18,10 @@ public class AdminTasklistController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetAsync([FromQuery] GetAdminTasklistRequest request)
+    [HttpGet("{periodId:guid}")]
+    public async Task<IActionResult> GetAsync(Guid periodId, [FromQuery] GetAdminTasklistRequest request)
     {
-        return Ok(await _mediator.Send(request.ToQuery()));
+        return Ok(await _mediator.Send(request.ToQuery(periodId)));
     }
 
     [HttpGet("{employeeId:guid}/{periodId:guid}")]
