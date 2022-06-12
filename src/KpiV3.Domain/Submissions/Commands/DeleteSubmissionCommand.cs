@@ -1,30 +1,43 @@
-﻿using KpiV3.Domain.Submissions.Repositories;
+﻿using KpiV3.Domain.Employees.Services;
 using MediatR;
 
 namespace KpiV3.Domain.Submissions.Commands;
 
-public record DeleteSubmissionCommand : IRequest<Result<IError>>
+public record DeleteSubmissionCommand : IRequest
 {
-    public Guid SubmissionId { get; set; }
-    public Guid IdOfWhoWantsToDelete { get; set; }
+    public Guid SubmissionId { get; init; }
+    public Guid EmployeeId { get; init; }
 }
 
-public class DeleteSubmissionCommandHandler : IRequestHandler<DeleteSubmissionCommand, Result<IError>>
+public class DeleteSubmissionCommandHandler : AsyncRequestHandler<DeleteSubmissionCommand>
 {
-    private readonly ISubmissionRepository _repository;
+    private readonly KpiContext _db;
+    private readonly EmployeePositionService _employeePositionService;
 
-    public DeleteSubmissionCommandHandler(ISubmissionRepository repository)
+    public DeleteSubmissionCommandHandler(
+        KpiContext db,
+        EmployeePositionService employeePositionService)
     {
-        _repository = repository;
+        _db = db;
+        _employeePositionService = employeePositionService;
     }
 
-    public async Task<Result<IError>> Handle(DeleteSubmissionCommand request, CancellationToken cancellationToken)
+    protected override async Task Handle(DeleteSubmissionCommand request, CancellationToken cancellationToken)
     {
-        return await _repository
-            .FindByIdAsync(request.SubmissionId)
-            .BindAsync(submission => submission.UploaderId != request.IdOfWhoWantsToDelete ?
-                Result<IError>.Fail(new ForbidenAction("This submission does not belong to you")) :
-                Result<IError>.Ok())
-            .BindAsync(() => _repository.DeleteAsync(request.SubmissionId));
+        var submission = await _db.Submissions
+            .FindAsync(new object?[] { request.SubmissionId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
+
+        if (submission.EmployeeId == request.EmployeeId ||
+            await _employeePositionService.EmployeeHasRootPositionAsync(request.EmployeeId, cancellationToken))
+        {
+            _db.Submissions.Remove(submission);
+        }
+        else
+        {
+            throw new ForbiddenActionException("You don't have access to this submisison");
+        }
+
+        await _db.SaveChangesAsync(cancellationToken);
     }
 }

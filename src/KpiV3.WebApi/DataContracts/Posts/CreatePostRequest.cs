@@ -6,16 +6,16 @@ namespace KpiV3.WebApi.DataContracts.Posts;
 public record CreatePostRequest
 {
     [Required(AllowEmptyStrings = false)]
-    public string Title { get; set; } = default!;
+    public string Title { get; init; } = default!;
 
     [Required(AllowEmptyStrings = false)]
-    public string Content { get; set; } = default!;
+    public string Content { get; init; } = default!;
 
-    public CreatePostCommand ToCommand(Guid authorId)
+    public CreatePostCommand ToCommand(Guid employeeId)
     {
         return new CreatePostCommand
         {
-            AuthorId = authorId,
+            EmployeeId = employeeId,
             Title = Title,
             Content = Content,
         };

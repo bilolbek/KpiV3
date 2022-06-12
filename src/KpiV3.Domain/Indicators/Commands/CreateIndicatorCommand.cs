@@ -1,31 +1,29 @@
-﻿using KpiV3.Domain.Common;
-using KpiV3.Domain.Indicators.DataContracts;
-using KpiV3.Domain.Indicators.Ports;
+﻿using KpiV3.Domain.Indicators.DataContracts;
 using MediatR;
 
 namespace KpiV3.Domain.Indicators.Commands;
 
-public record CreateIndicatorCommand : IRequest<Result<Indicator, IError>>
+public record CreateIndicatorCommand : IRequest<Indicator>
 {
-    public string Name { get; set; } = default!;
-    public string Description { get; set; } = default!;
-    public string Comment { get; set; } = default!;
+    public string Name { get; init; } = default!;
+    public string Description { get; init; } = default!;
+    public string? Comment { get; set; }
 }
 
-public class CreateIndicatorCommandHandler : IRequestHandler<CreateIndicatorCommand, Result<Indicator, IError>>
+public class CreateIndicatorCommandHandler : IRequestHandler<CreateIndicatorCommand, Indicator>
 {
-    private readonly IIndicatorRepository _repository;
+    private readonly KpiContext _db;
     private readonly IGuidProvider _guidProvider;
 
     public CreateIndicatorCommandHandler(
-        IIndicatorRepository repository, 
+        KpiContext db,
         IGuidProvider guidProvider)
     {
-        _repository = repository;
+        _db = db;
         _guidProvider = guidProvider;
     }
 
-    public async Task<Result<Indicator, IError>> Handle(CreateIndicatorCommand request, CancellationToken cancellationToken)
+    public async Task<Indicator> Handle(CreateIndicatorCommand request, CancellationToken cancellationToken)
     {
         var indicator = new Indicator
         {
@@ -35,8 +33,10 @@ public class CreateIndicatorCommandHandler : IRequestHandler<CreateIndicatorComm
             Comment = request.Comment,
         };
 
-        return await _repository
-            .InsertAsync(indicator)
-            .InsertSuccessAsync(() => indicator);
+        _db.Indicators.Add(indicator);
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        return indicator;
     }
 }

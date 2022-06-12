@@ -1,34 +1,33 @@
 ﻿using KpiV3.Domain.Positions.DataContracts;
-using KpiV3.Domain.Positions.Ports;
 using MediatR;
 
 namespace KpiV3.Domain.Positions.Commands;
 
-public record UpdatePositionCommand : IRequest<Result<Position, IError>>
+public record UpdatePositionCommand : IRequest<Position>
 {
-    public Guid PositionId { get; set; }
-    public string Name { get; set; } = default!;
+    public Guid PositionId { get; init; }
+    public string Name { get; init; } = default!;
 }
 
-public class UpdatePositionCommandHandler : IRequestHandler<UpdatePositionCommand, Result<Position, IError>>
+public class UpdatePositionCommandHandler : IRequestHandler<UpdatePositionCommand, Position>
 {
-    private readonly IPositionRepository _repository;
+    private readonly KpiContext _db;
 
-    public UpdatePositionCommandHandler(IPositionRepository repository)
+    public UpdatePositionCommandHandler(KpiContext db)
     {
-        _repository = repository;
+        _db = db;
     }
 
-    public async Task<Result<Position, IError>> Handle(UpdatePositionCommand request, CancellationToken cancellationToken)
+    public async Task<Position> Handle(UpdatePositionCommand request, CancellationToken cancellationToken)
     {
-        return await _repository
-            .FindByIdAsync(request.PositionId)
-            .BindAsync(position => position.Type is PositionType.Root ?
-                Result<Position, IError>.Fail(new BusinessRuleViolation("Cannot update root position")) :
-                Result<Position, IError>.Ok(position))
-            .MapAsync(position => position with { Name = request.Name })
-            .BindAsync(position => _repository
-                .UpdateAsync(position)
-                .InsertSuccessAsync(() => position));
+        var position = await _db.Positions
+            .FindAsync(new object?[] { request.PositionId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
+
+        position.Name = request.Name;
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        return position;
     }
 }

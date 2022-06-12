@@ -1,4 +1,4 @@
-﻿using KpiV3.Domain.Common;
+﻿using KpiV3.Domain.Common.Ports;
 
 namespace KpiV3.Infrastructure.Common;
 

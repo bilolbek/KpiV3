@@ -1,40 +1,61 @@
 ﻿using KpiV3.Domain.Comments.DataContracts;
-using KpiV3.Domain.Comments.Ports;
-using KpiV3.Domain.Employees.Ports;
+using KpiV3.Domain.Comments.Services;
 using MediatR;
 
 namespace KpiV3.Domain.Comments.Commands;
 
-public record UpdateCommentCommand : IRequest<Result<CommentWithAuthor, IError>>
+public record UpdateCommentCommand : IRequest<CommentWithAuthor>
 {
-    public Guid CommentId { get; set; }
-    public string Content { get; set; } = default!;
-    public Guid IdOfWhoWantsToUpdate { get; set; }
+    public Guid CommentId { get; init; }
+    public string Content { get; init; } = default!;
+    public Guid IdOfWhoWantsToUpdate { get; init; }
 }
 
-public class UpdateCommentCommandHandler : IRequestHandler<UpdateCommentCommand, Result<CommentWithAuthor, IError>>
+public class UpdateCommentCommandHandler : IRequestHandler<UpdateCommentCommand, CommentWithAuthor>
 {
-    private readonly ICommentRepository _commentRepository;
-    private readonly IEmployeeRepository _employeeRepository;
+    private readonly KpiContext _db;
+    private readonly CommentAuthorityService _commentAuthorityService;
 
     public UpdateCommentCommandHandler(
-        ICommentRepository commentRepository, 
-        IEmployeeRepository employeeRepository)
+        KpiContext db,
+        CommentAuthorityService commentAuthorityService)
     {
-        _commentRepository = commentRepository;
-        _employeeRepository = employeeRepository;
+        _db = db;
+        _commentAuthorityService = commentAuthorityService;
     }
 
-    public async Task<Result<CommentWithAuthor, IError>> Handle(UpdateCommentCommand request, CancellationToken cancellationToken)
+    public async Task<CommentWithAuthor> Handle(UpdateCommentCommand request, CancellationToken cancellationToken)
     {
-        return await _commentRepository
-            .FindByIdAsync(request.CommentId)
-            .BindAsync(comment => comment.CanBeModifiedBy(request.IdOfWhoWantsToUpdate))
-            .MapAsync(comment => comment with { Content = request.Content })
-            .BindAsync(comment => _commentRepository
-                .UpdateAsync(comment)
-                .InsertSuccessAsync(() => _employeeRepository
-                    .FindByIdAsync(comment.AuthorId)
-                    .MapAsync(author => new CommentWithAuthor(comment, author))));
+        await _commentAuthorityService.EnsureEmployeeCanModifyCommentAsync(
+            request.IdOfWhoWantsToUpdate,
+            request.CommentId,
+            cancellationToken);
+
+        var comment = await _db.Comments
+            .FindAsync(new object?[] { request.CommentId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
+
+        comment.Content = request.Content;
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        var author = await _db.Employees
+            .FindAsync(new object?[] { comment.AuthorId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
+
+        return new CommentWithAuthor
+        {
+            Id = comment.Id,
+            Author = new()
+            {
+                Id = author.Id,
+                AvatarId = author.AvatarId,
+                Email = author.Email,
+                Name = author.Name,
+            },
+            CommentBlockId = comment.CommentBlockId,
+            Content = comment.Content,
+            WrittenDate = comment.WrittenDate,
+        };
     }
 }

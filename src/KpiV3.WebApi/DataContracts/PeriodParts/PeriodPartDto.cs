@@ -1,28 +1,24 @@
-﻿using KpiV3.Domain.PeriodParts.DataContracts;
+﻿using KpiV3.Domain.Common.DataContracts;
+using KpiV3.Domain.PeriodParts.DataContracts;
+using KpiV3.WebApi.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace KpiV3.WebApi.DataContracts.PeriodParts;
 
 public record PeriodPartDto
 {
-    public PeriodPartDto()
-    {
-    }
-
     public PeriodPartDto(PeriodPart part)
     {
         Id = part.Id;
         Name = part.Name;
+        From = part.Range.From;
+        To = part.Range.To;
         PeriodId = part.PeriodId;
-        From = part.From;
-        To = part.To;
     }
 
-    public Guid Id { get; set; }
-
-    public string Name { get; set; } = default!;
-
-    public Guid PeriodId { get; set; }
-
-    public DateTimeOffset From { get; set; }
-    public DateTimeOffset To { get; set; }
+    public Guid Id { get; init; }
+    public string Name { get; init; } = default!;
+    public DateTimeOffset From { get; init; }
+    public DateTimeOffset To { get; init; }
+    public Guid PeriodId { get; init; }
 }

@@ -1,28 +1,40 @@
-﻿using KpiV3.Domain.Comments.Ports;
+﻿using KpiV3.Domain.Comments.Services;
 using MediatR;
 
 namespace KpiV3.Domain.Comments.Commands;
 
-public record DeleteCommentCommand : IRequest<Result<IError>>
+public record DeleteCommentCommand : IRequest
 {
-    public Guid CommentId { get; set; }
-    public Guid IdOfWhoWantsToDelete { get; set; }
+    public Guid CommentId { get; init; }
+    public Guid IdOfWhoWantsToDelete { get; init; }
 }
 
-public class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentCommand, Result<IError>>
+public class DeleteCommentCommandHandle : AsyncRequestHandler<DeleteCommentCommand>
 {
-    private readonly ICommentRepository _repository;
+    private readonly KpiContext _db;
+    private readonly CommentAuthorityService _commentAuthorityService;
 
-    public DeleteCommentCommandHandler(ICommentRepository repository)
+    public DeleteCommentCommandHandle(
+        KpiContext db,
+        CommentAuthorityService commentAuthorityService)
     {
-        _repository = repository;
+        _db = db;
+        _commentAuthorityService = commentAuthorityService;
     }
 
-    public async Task<Result<IError>> Handle(DeleteCommentCommand request, CancellationToken cancellationToken)
+    protected override async Task Handle(DeleteCommentCommand request, CancellationToken cancellationToken)
     {
-        return await _repository
-            .FindByIdAsync(request.CommentId)
-            .BindAsync(comment => comment.CanBeModifiedBy(request.IdOfWhoWantsToDelete))
-            .BindAsync(comment => _repository.DeleteAsync(comment.Id));
+        await _commentAuthorityService.EnsureEmployeeCanModifyCommentAsync(
+            request.IdOfWhoWantsToDelete,
+            request.CommentId,
+            cancellationToken);
+
+        var comment = await _db.Comments
+            .FindAsync(new object?[] { request.CommentId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
+
+        _db.Comments.Remove(comment);
+
+        await _db.SaveChangesAsync(cancellationToken);
     }
 }

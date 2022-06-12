@@ -1,52 +1,63 @@
 ﻿using KpiV3.Domain.Comments.DataContracts;
-using KpiV3.Domain.Comments.Ports;
-using KpiV3.Domain.Common;
-using KpiV3.Domain.Employees.Ports;
 using MediatR;
 
 namespace KpiV3.Domain.Comments.Commands;
 
-public record CreateCommentCommand : IRequest<Result<CommentWithAuthor, IError>>
+public record CreateCommentCommand : IRequest<CommentWithAuthor>
 {
-    public Guid AuthorId { get; set; }
-    public string Content { get; set; } = default!;
-    public Guid BlockId { get; set; }
+    public Guid EmployeeId { get; init; }
+    public string Content { get; init; } = default!;
+    public Guid BlockId { get; init; }
 }
 
-public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand, Result<CommentWithAuthor, IError>>
+public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand, CommentWithAuthor>
 {
-    private readonly IEmployeeRepository _employeeRepository;
-    private readonly ICommentRepository _commentRepository;
-    private readonly IDateProvider _dateProvider;
+    private readonly KpiContext _db;
     private readonly IGuidProvider _guidProvider;
+    private readonly IDateProvider _dateProvider;
 
     public CreateCommentCommandHandler(
-        IEmployeeRepository employeeRepository,
-        ICommentRepository commentRepository,
-        IDateProvider dateProvider,
-        IGuidProvider guidProvider)
+        KpiContext db,
+        IGuidProvider guidProvider,
+        IDateProvider dateProvider)
     {
-        _employeeRepository = employeeRepository;
-        _commentRepository = commentRepository;
-        _dateProvider = dateProvider;
+        _db = db;
         _guidProvider = guidProvider;
+        _dateProvider = dateProvider;
     }
 
-    public async Task<Result<CommentWithAuthor, IError>> Handle(CreateCommentCommand request, CancellationToken cancellationToken)
+    public async Task<CommentWithAuthor> Handle(CreateCommentCommand request, CancellationToken cancellationToken)
     {
         var comment = new Comment
         {
             Id = _guidProvider.New(),
-            AuthorId = request.AuthorId,
-            BlockId = request.BlockId,
+            AuthorId = request.EmployeeId,
+            CommentBlockId = request.BlockId,
             Content = request.Content,
             WrittenDate = _dateProvider.Now(),
         };
 
-        return await _commentRepository
-            .InsertAsync(comment)
-            .InsertSuccessAsync(() => _employeeRepository
-                .FindByIdAsync(comment.AuthorId)
-                .MapAsync(author => new CommentWithAuthor(comment, author)));
+        _db.Comments.Add(comment);
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        var author = await _db.Employees
+            .FindAsync(new object?[] { request.EmployeeId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
+
+        return new CommentWithAuthor
+        {
+            Id = comment.Id,
+            Author = new()
+            {
+                Id = author.Id,
+                AvatarId = author.AvatarId,
+                Email = author.Email,
+                Name = author.Name,
+            },
+            CommentBlockId = comment.CommentBlockId,
+            Content = comment.Content,
+            WrittenDate = comment.WrittenDate,
+        };
     }
 }

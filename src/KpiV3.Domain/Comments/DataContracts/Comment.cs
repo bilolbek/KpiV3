@@ -1,20 +1,19 @@
-﻿namespace KpiV3.Domain.Comments.DataContracts;
+﻿using KpiV3.Domain.Employees.DataContracts;
+using KpiV3.Domain.Posts.DataContracts;
 
-public record Comment
+namespace KpiV3.Domain.Comments.DataContracts;
+
+public class Comment
 {
     public Guid Id { get; set; }
-    public string Content { get; set; } = default!;
+
     public Guid AuthorId { get; set; }
-    public Guid BlockId { get; set; }
+    public Employee Author { get; set; } = default!;
+
+    public string Content { get; set; } = default!;
+
+    public Guid CommentBlockId { get; set; }
+    public CommentBlock CommentBlock { get; set; } = default!;
+
     public DateTimeOffset WrittenDate { get; set; }
-
-    public Result<Comment, IError> CanBeModifiedBy(Guid modifierId)
-    {
-        if (modifierId == AuthorId)
-        {
-            return Result<Comment, IError>.Ok(this);
-        }
-
-        return Result<Comment, IError>.Fail(new ForbidenAction("You are not allowed to modify this comment"));
-    }
 }

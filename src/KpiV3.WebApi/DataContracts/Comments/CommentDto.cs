@@ -10,18 +10,18 @@ public class CommentDto
 
     }
 
-    public CommentDto(CommentWithAuthor         comment)
+    public CommentDto(CommentWithAuthor comment)
     {
         Id = comment.Id;
         Author = new(comment.Author);
         Content = comment.Content;
         WrittenDate = comment.WrittenDate;
-        BlockId = comment.BlockId;
+        BlockId = comment.CommentBlockId;
     }
 
     public Guid Id { get; set; }
 
-    public AuthorDto Author { get; set; } = default!;
+    public ProfileDto Author { get; set; } = default!;
 
     public string Content { get; set; } = default!;
 

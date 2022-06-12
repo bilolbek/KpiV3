@@ -1,19 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		<ImplicitUsings>true</ImplicitUsings>
+		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
-	<ItemGroup>
-	  <PackageReference Include="MediatR" Version="10.0.1" />
-	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\KpiV3.Rop\KpiV3.Rop.csproj" />
+		<PackageReference Include="MediatR" Version="10.0.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.5" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.5" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.4" />
 	</ItemGroup>
 
+
 	<ItemGroup>
-		<Using Include="KpiV3.Rop" />
-		<Using Include="KpiV3.Domain.DataContracts.Errors" />
+		<Using Include="KpiV3.Domain.Common.Exceptions" />
+		<Using Include="KpiV3.Domain.Common.Extensions" />
+		<Using Include="KpiV3.Domain.Common.Ports" />
+		
+		<Using Include="Microsoft.EntityFrameworkCore" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Folder Include="Grades\Queries\" />
 	</ItemGroup>
 </Project>

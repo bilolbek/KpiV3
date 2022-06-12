@@ -1,6 +1,5 @@
-﻿using KpiV3.WebApi.Authentication;
-using KpiV3.WebApi.Authentication.DataContracts;
-using KpiV3.WebApi.Extensions;
+﻿using KpiV3.WebApi.Authentication.DataContracts;
+using KpiV3.WebApi.Authentication.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KpiV3.WebApi.Controllers;
@@ -9,18 +8,20 @@ namespace KpiV3.WebApi.Controllers;
 [Route("api/[controller]")]
 public class TokenController : ControllerBase
 {
-    private readonly IJwtTokenProvider _tokenProvider;
+    private readonly IJwtTokenService _jwtTokenService;
 
-    public TokenController(IJwtTokenProvider tokenProvider)
+    public TokenController(IJwtTokenService jwtTokenService)
     {
-        _tokenProvider = tokenProvider;
+        _jwtTokenService = jwtTokenService;
     }
 
     [HttpPost]
+    [ProducesResponseType(200, Type = typeof(JwtToken))]
+    [ProducesResponseType(401)]
     public async Task<IActionResult> CreateAsync([FromBody] Credentials credentials)
     {
-        return await _tokenProvider
-            .CreateToken(credentials)
-            .MatchAsync(token => Ok(token), error => error.MapToActionResult());
+        var token = await _jwtTokenService.CreateTokenAsync(credentials);
+
+        return Ok(token);
     }
 }

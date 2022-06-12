@@ -1,14 +1,18 @@
 ﻿using KpiV3.Domain.Periods.Commands;
+using KpiV3.WebApi.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace KpiV3.WebApi.DataContracts.Periods;
 
-public class UpdatePeriodRequest
+public record UpdatePeriodRequest
 {
-    [Required(AllowEmptyStrings = false)]
-    public string Name { get; set; } = default!;
-    public DateTimeOffset From { get; set; }
-    public DateTimeOffset To { get; set; }
+    [Required(AllowEmptyStrings = true)]
+    public string Name { get; init; } = default!;
+
+    public DateTimeOffset From { get; init; }
+
+    [GreaterThan(nameof(From))]
+    public DateTimeOffset To { get; init; }
 
     public UpdatePeriodCommand ToCommand(Guid periodId)
     {
@@ -16,8 +20,11 @@ public class UpdatePeriodRequest
         {
             PeriodId = periodId,
             Name = Name,
-            From = From,
-            To = To
+            Range = new()
+            {
+                From = From,
+                To = To,
+            },
         };
     }
 }

@@ -1,5 +1,4 @@
-﻿using KpiV3.Domain.DataContracts.Models;
-using KpiV3.Domain.Employees.Commands;
+﻿using KpiV3.Domain.Employees.Commands;
 using System.ComponentModel.DataAnnotations;
 
 namespace KpiV3.WebApi.DataContracts.Employees;
@@ -20,13 +19,13 @@ public record RegisterEmployeeRequest
 
     public Guid PositionId { get; set; }
 
-    public RegisterEmployeeCommand ToCommand()
+    public CreateEmployeeCommand ToCommand()
     {
-        return new RegisterEmployeeCommand
+        return new CreateEmployeeCommand
         {
             Email = Email,
             PositionId = PositionId,
-            Name = new Name
+            Name = new()
             {
                 FirstName = FirstName,
                 LastName = LastName,

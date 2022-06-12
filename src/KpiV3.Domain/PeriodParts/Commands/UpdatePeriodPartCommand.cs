@@ -1,47 +1,47 @@
-﻿using KpiV3.Domain.Common;
+﻿using KpiV3.Domain.Common.DataContracts;
 using KpiV3.Domain.PeriodParts.DataContracts;
-using KpiV3.Domain.PeriodParts.Ports;
-using KpiV3.Domain.Periods.Ports;
 using MediatR;
 
 namespace KpiV3.Domain.PeriodParts.Commands;
 
-public record UpdatePeriodPartCommand : IRequest<Result<PeriodPart, IError>>
+public record UpdatePeriodPartCommand : IRequest<PeriodPart>
 {
-    public Guid PartId { get; set; }
-    public string Name { get; set; } = default!;
-    public DateTimeOffset From { get; set; }
-    public DateTimeOffset To { get; set; }
+    public Guid PartId { get; init; }
+    public string Name { get; init; } = default!;
+    public DateRange Range { get; init; } = default!;
 }
 
-public class UpdatePeriodPartCommandHandler : IRequestHandler<UpdatePeriodPartCommand, Result<PeriodPart, IError>>
+public class UpdatePeriodPartCommandHandler : IRequestHandler<UpdatePeriodPartCommand, PeriodPart>
 {
-    private readonly IPeriodPartRepository _periodPartRepository;
-    private readonly IPeriodRepository _periodRepository;
+    private readonly KpiContext _db;
 
-    public UpdatePeriodPartCommandHandler(
-        IPeriodPartRepository periodPartRepository,
-        IPeriodRepository periodRepository)
+    public UpdatePeriodPartCommandHandler(KpiContext db)
     {
-        _periodPartRepository = periodPartRepository;
-        _periodRepository = periodRepository;
+        _db = db;
     }
 
-    public async Task<Result<PeriodPart, IError>> Handle(UpdatePeriodPartCommand request, CancellationToken cancellationToken)
+    public async Task<PeriodPart> Handle(UpdatePeriodPartCommand request, CancellationToken cancellationToken)
     {
-        return await _periodPartRepository
-            .FindByIdAsync(request.PartId)
-            .BindAsync(part => _periodRepository
-                .FindByIdAsync(part.PeriodId)
-                .BindAsync(period => Ensure.That(request.From >= period.From && request.To <= period.To, ""))
-                .InsertSuccessAsync(() => part with
-                {
-                    Name = request.Name,
-                    From = request.From,
-                    To = request.To,
-                })
-                .BindAsync(part => _periodPartRepository
-                    .UpdateAsync(part)
-                    .InsertSuccessAsync(() => part)));
+        var part = await _db.PeriodParts
+            .Include(p => p.Period)
+            .FirstOrDefaultAsync(p => p.Id == request.PartId, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
+
+        EnsurePartIsInsidePeriodAsync(part, request);
+
+        part.Name = request.Name;
+        part.Range = request.Range;
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        return part;
+    }
+
+    private void EnsurePartIsInsidePeriodAsync(PeriodPart periodPart, UpdatePeriodPartCommand request)
+    {
+        if (!periodPart.Period.Includes(request.Range))
+        {
+            throw new InvalidInputException("Give range does not lie inside given period range");
+        }
     }
 }

@@ -1,43 +1,41 @@
-﻿using KpiV3.Domain.Employees.DataContracts;
-using KpiV3.Domain.Employees.Ports;
+﻿using KpiV3.Domain.Employees.Ports;
 using MediatR;
 
 namespace KpiV3.Domain.Employees.Commands;
 
-public record ChangePasswordCommand : IRequest<Result<IError>>
+public record ChangePasswordCommand : IRequest
 {
-    public Guid EmployeeId { get; set; }
-    public string OldPassword { get; set; } = default!;
-    public string NewPassword { get; set; } = default!;
+    public Guid EmployeeId { get; init; }
+    public string OldPassword { get; init; } = default!;
+    public string NewPassword { get; init; } = default!;
 }
 
-
-public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand, Result<IError>>
+public class ChangePasswordCommandHandler : AsyncRequestHandler<ChangePasswordCommand>
 {
-    private readonly IEmployeeRepository _employeeRepository;
+    private readonly KpiContext _db;
     private readonly IPasswordHasher _passwordHasher;
 
     public ChangePasswordCommandHandler(
-        IEmployeeRepository employeeRepository,
+        KpiContext db,
         IPasswordHasher passwordHasher)
     {
-        _employeeRepository = employeeRepository;
+        _db = db;
         _passwordHasher = passwordHasher;
     }
 
-    public async Task<Result<IError>> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
+    protected override async Task Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
     {
-        return await _employeeRepository
-            .FindByIdAsync(request.EmployeeId)
-            .BindAsync(employee =>
-            {
-                if (!_passwordHasher.Verify(request.OldPassword, employee.PasswordHash))
-                {
-                    return Result<Employee, IError>.Fail(new ForbidenAction("Wrong password"));
-                }
+        var employee = await _db.Employees
+            .FindAsync(new object?[] { request.EmployeeId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
 
-                return Result<Employee, IError>.Ok(employee with { PasswordHash = _passwordHasher.Hash(request.NewPassword) });
-            })
-            .BindAsync(employee => _employeeRepository.UpdateAsync(employee));
+        if (!_passwordHasher.Verify(request.OldPassword, employee.PasswordHash))
+        {
+            throw new InvalidInputException("Old password is wrong");
+        }
+
+        employee.PasswordHash = _passwordHasher.Hash(request.NewPassword);
+
+        await _db.SaveChangesAsync(cancellationToken);
     }
 }

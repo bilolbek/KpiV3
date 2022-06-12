@@ -1,55 +1,45 @@
-﻿using KpiV3.Domain.Common;
-using KpiV3.Domain.Grades.DataContracts;
-using KpiV3.Domain.Grades.Ports;
-using KpiV3.Domain.Requirements.Ports;
+﻿using KpiV3.Domain.Grades.Services;
 using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace KpiV3.Domain.Grades.Commands;
 
-public record UpdateGradeCommand : IRequest<Result<Grade, IError>>
+public record UpdateGradeCommand : IRequest
 {
-    public Guid EmployeeId { get; set; }
-    public Guid RequirementId { get; set; }
-    public double Value { get; set; }
+    public Guid EmployeeId { get; init; }
+    public Guid RequirementId { get; init; }
+    public double Value { get; init; }
 }
 
-public class UpdateGradeCommandHandler : IRequestHandler<UpdateGradeCommand, Result<Grade, IError>>
+public class UpdateGradeCommandHandler : AsyncRequestHandler<UpdateGradeCommand>
 {
-    private readonly IGradeRepository _gradeRepository;
-    private readonly IRequirementRepository _requirementRepository;
-    private readonly ITransactionProvider _transactionProvider;
+    private readonly KpiContext _db;
+    private readonly GradeValidationService _gradeValidationService;
 
     public UpdateGradeCommandHandler(
-        IGradeRepository gradeRepository,
-        IRequirementRepository requirementRepository,
-        ITransactionProvider transactionProvider)
+        KpiContext db,
+        GradeValidationService gradeValidationService)
     {
-        _gradeRepository = gradeRepository;
-        _requirementRepository = requirementRepository;
-        _transactionProvider = transactionProvider;
+        _db = db;
+        _gradeValidationService = gradeValidationService;
     }
 
-    public async Task<Result<Grade, IError>> Handle(UpdateGradeCommand request, CancellationToken cancellationToken)
+    protected override async Task Handle(UpdateGradeCommand request, CancellationToken cancellationToken)
     {
-        var grade = new Grade
-        {
-            EmployeeId = request.EmployeeId,
-            RequirementId = request.RequirementId,
-            Value = request.Value,
-        };
+        var grade = await _db.Grades
+            .FirstOrDefaultAsync(g =>
+                g.EmployeeId == request.EmployeeId &&
+                g.RequirementId == request.RequirementId, cancellationToken)
+            .EnsureFoundAsync();
 
-        return await _transactionProvider
-            .RunAsync(() => EnsureThanValueDoesNotExceedWeight(request)
-                .BindAsync(() => _gradeRepository.UpdateAsync(grade)))
-            .InsertSuccessAsync(() => grade);
-    }
+        grade.Value = request.Value;
 
-    private async Task<Result<IError>> EnsureThanValueDoesNotExceedWeight(UpdateGradeCommand request)
-    {
-        return await _requirementRepository
-            .FindByIdAsync(request.RequirementId)
-            .BindAsync(requirement => request.Value > requirement.Weight ?
-                Result<IError>.Fail(new BusinessRuleViolation("Value cannot exceed weight")) :
-                Result<IError>.Ok());
+        await _gradeValidationService.ValidateGradeAsync(grade, cancellationToken);
+
+        await _db.SaveChangesAsync(cancellationToken);
     }
 }

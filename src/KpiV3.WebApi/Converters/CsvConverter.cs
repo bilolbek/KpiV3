@@ -6,7 +6,7 @@ namespace KpiV3.WebApi.Converters;
 
 public static class CsvConverter
 {
-    public static Result<List<T>, IError> Convert<T>(Stream csvStream, Action<T>? onEach = null)
+    public static List<T> Convert<T>(Stream csvStream, Action<T>? onEach = null)
     {
         using var reader = new StreamReader(csvStream);
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
@@ -20,13 +20,13 @@ public static class CsvConverter
 
             if (!Validator.TryValidateObject(record!, context, results, true))
             {
-                return Result<List<T>, IError>.Fail(new InvalidInput(results.First().ErrorMessage!));
+                throw new InvalidOperationException(results.First().ErrorMessage!);
             }
 
             onEach?.Invoke(record);
         }
 
-        return Result<List<T>, IError>.Ok(records);
+        return records;
     }
 
     public static string Convert<T>(List<T> records)

@@ -1,10 +1,9 @@
 ﻿using KpiV3.Domain.Employees.Queries;
-using KpiV3.Domain.Specialties.Queries;
-using KpiV3.WebApi.Authentication;
-using KpiV3.WebApi.DataContracts.Employees;
+using KpiV3.Domain.SpecialtyChoices.Queries;
+using KpiV3.WebApi.Authentication.Services;
+using KpiV3.WebApi.DataContracts.Common;
 using KpiV3.WebApi.DataContracts.Profiles;
 using KpiV3.WebApi.DataContracts.Specialties;
-using KpiV3.WebApi.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +13,6 @@ namespace KpiV3.WebApi.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-[ApiVersion("3.0")]
 public class ProfileController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -30,42 +28,44 @@ public class ProfileController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(ProfileDto))]
-    public async Task<IActionResult> GetAsync()
+    public async Task<IActionResult> GetAsync(CancellationToken cancellationToken)
     {
-        return await _mediator
-            .Send(new GetProfileQuery { EmployeeId = _employeeAccessor.EmployeeId })
-            .MapAsync(profile => new ProfileDto(profile))
-            .MatchAsync(profile => Ok(profile), error => error.MapToActionResult());
+        var profile = await _mediator.Send(new GetProfileQuery
+        {
+            EmployeeId = _employeeAccessor.EmployeeId
+        }, cancellationToken);
+
+        return Ok(new ProfileDto(profile));
     }
 
     [HttpPut]
     [ProducesResponseType(200)]
     public async Task<IActionResult> UpdateProfileAsync([FromBody] UpdateProfileRequest request)
     {
-        return await _mediator
-            .Send(request.ToCommand(_employeeAccessor.EmployeeId))
-            .MatchAsync(() => Ok(), error => error.MapToActionResult());
+        await _mediator.Send(request.ToCommand(_employeeAccessor.EmployeeId));
+
+        return Ok();
     }
 
     [HttpPost("change-password")]
     [ProducesResponseType(200)]
-    [ProducesResponseType(403)]
+    [ProducesResponseType(401)]
     public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordRequest request)
     {
-        return await _mediator
-            .Send(request.ToCommand(_employeeAccessor.EmployeeId))
-            .MatchAsync(() => Ok(), error => error.MapToActionResult());
+        await _mediator.Send(request.ToCommand(_employeeAccessor.EmployeeId));
+
+        return Ok();
     }
 
     [HttpGet("specialty/{periodId:guid}")]
     [ProducesResponseType(200, Type = typeof(SpecialtyDto))]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> GetChoosenSpecialtyAsync(Guid periodId)
+    public async Task<IActionResult> GetChosenSpecialtyAsync(Guid periodId)
     {
-        return await _mediator
-            .Send(new GetChoosenSpecialtyQuery { PeriodId = periodId, EmployeeId = _employeeAccessor.EmployeeId })
-            .MapAsync(specialty => new SpecialtyDto(specialty))
-            .MatchAsync(specialty => Ok(specialty), error => error.MapToActionResult());
+        var specialty = await _mediator
+            .Send(new GetChosenSpecialtyQuery { PeriodId = periodId, EmployeeId = _employeeAccessor.EmployeeId });
+
+        return Ok(new SpecialtyDto(specialty));
     }
 
     [HttpPost("specialty")]
@@ -74,8 +74,8 @@ public class ProfileController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<IActionResult> ChooseSpecialtyAsync([FromBody] ChooseSpecialtyRequest request)
     {
-        return await _mediator
-            .Send(request.ToCommand(_employeeAccessor.EmployeeId))
-            .MatchAsync(() => Ok(), error => error.MapToActionResult());
+        await _mediator.Send(request.ToCommand(_employeeAccessor.EmployeeId));
+
+        return Ok();
     }
 }

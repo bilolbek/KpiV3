@@ -1,55 +1,48 @@
-﻿using KpiV3.Domain.Common;
-using KpiV3.Domain.Grades.DataContracts;
-using KpiV3.Domain.Grades.Ports;
-using KpiV3.Domain.Requirements.Ports;
+﻿using KpiV3.Domain.Grades.DataContracts;
+using KpiV3.Domain.Grades.Services;
 using MediatR;
 
 namespace KpiV3.Domain.Grades.Commands;
 
-public record CreateGradeCommand : IRequest<Result<Grade, IError>>
+public record CreateGradeCommand : IRequest
 {
-    public Guid EmployeeId { get; set; }
-    public Guid RequirementId { get; set; }
-    public double Value { get; set; }
+    public Guid EmployeeId { get; init; }
+    public Guid RequirementId { get; init; }
+    public double Value { get; init; }
 }
 
-public class CreateGradeCommandHandler : IRequestHandler<CreateGradeCommand, Result<Grade, IError>>
+public class CreateGradeCommandHandler : AsyncRequestHandler<CreateGradeCommand>
 {
-    private readonly IGradeRepository _gradeRepository;
-    private readonly IRequirementRepository _requirementRepository;
-    private readonly ITransactionProvider _transactionProvider;
+    private readonly KpiContext _db;
+    private readonly IDateProvider _dateProvider;
+    private readonly GradeValidationService _gradeValidationService;
 
     public CreateGradeCommandHandler(
-        IGradeRepository gradeRepository,
-        IRequirementRepository requirementRepository,
-        ITransactionProvider transactionProvider)
+        KpiContext db,
+        IDateProvider dateProvider,
+        GradeValidationService gradeValidationService)
     {
-        _gradeRepository = gradeRepository;
-        _requirementRepository = requirementRepository;
-        _transactionProvider = transactionProvider;
+        _db = db;
+        _dateProvider = dateProvider;
+        _gradeValidationService = gradeValidationService;
     }
 
-    public async Task<Result<Grade, IError>> Handle(CreateGradeCommand request, CancellationToken cancellationToken)
+    protected override async Task Handle(CreateGradeCommand request, CancellationToken cancellationToken)
     {
+        await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
+
         var grade = new Grade
         {
             EmployeeId = request.EmployeeId,
             RequirementId = request.RequirementId,
             Value = request.Value,
+            GradedDate = _dateProvider.Now(),
         };
 
-        return await _transactionProvider
-            .RunAsync(() => EnsureThanValueDoesNotExceedWeight(request)
-                .BindAsync(() => _gradeRepository.InsertAsync(grade)))
-            .InsertSuccessAsync(() => grade); 
-    }
+        await _gradeValidationService.ValidateGradeAsync(grade, cancellationToken);
 
-    private async Task<Result<IError>> EnsureThanValueDoesNotExceedWeight(CreateGradeCommand request)
-    {
-        return await _requirementRepository
-            .FindByIdAsync(request.RequirementId)
-            .BindAsync(requirement => request.Value > requirement.Weight ?
-                Result<IError>.Fail(new BusinessRuleViolation("Value cannot exceed weight")) :
-                Result<IError>.Ok());
+        _db.Grades.Add(grade);
+
+        await transaction.CommitAsync(cancellationToken);
     }
 }

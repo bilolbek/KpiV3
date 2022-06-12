@@ -18,16 +18,13 @@ services:
       - Jwt__TokenLifetime=1:00:00
       - Jwt__Secret=TestingPurposesOnlySecretDoNotUseInProductionPlease
 
-      - DataInitialization__Positions__0__Name=Admin
-      - DataInitialization__Positions__0__Type=Root
+      - DataInitialization__Email=admin@kpi.com
+      - DataInitialization__FirstName=Admin
+      - DataInitialization__LastName=Adminov
+      - DataInitialization__MiddleName=Adminovich
 
-      - DataInitialization__Employees__1__Email=admin@kpi.com
-      - DataInitialization__Employees__1__FirstName=Admin
-      - DataInitialization__Employees__1__LastName=Adminovich
-      - DataInitialization__Employees__1__Position=Admin
-
-      - DataInitialization__RetryCount=5
-      - DataInitialization__RetryWait=00:00:10
+      - Welcome__Subject=Welcome to AITU KPI
+      - Welcome__BodyTemplate=Hello, {0}. You have been registered in Aitu KPI. Your password is {1}
 
       - S3__AccessKey=minio_user
       - S3__SecretKey=minio_pass
@@ -54,6 +51,8 @@ services:
 
   database:
     image: postgres
+    container_name: postgres
+    hostname: postgres
 
     ports:
       - 5432:5432
@@ -65,17 +64,6 @@ services:
       - POSTGRES_USER=kpi_user
       - POSTGRES_PASSWORD=kpi_pass
       - POSTGRES_DB=kpi_db
-
-  flyway:
-    image: flyway/flyway
-
-    command: -url=jdbc:postgresql://database/kpi_db -user=kpi_user -password=kpi_pass -connectRetries=10 migrate
-
-    volumes:
-      - ./src/flyway/:/flyway/sql 
-
-    depends_on:
-      - database
 
 volumes:
   database.volume:

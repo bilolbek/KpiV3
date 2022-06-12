@@ -1,24 +1,29 @@
-﻿using KpiV3.Domain.PeriodParts.Ports;
-using MediatR;
+﻿using MediatR;
 
 namespace KpiV3.Domain.PeriodParts.Commands;
 
-public record DeletePeriodPartCommand : IRequest<Result<IError>>
+public record DeletePeriodPartCommand : IRequest
 {
-    public Guid PartId { get; set; }
+    public Guid PartId { get; init; }
 }
 
-public class DeletePeriodPartCommandHandler : IRequestHandler<DeletePeriodPartCommand, Result<IError>>
+public class DeletePeriodPartCommandHandler : AsyncRequestHandler<DeletePeriodPartCommand>
 {
-    public readonly IPeriodPartRepository _repository;
+    private readonly KpiContext _db;
 
-    public DeletePeriodPartCommandHandler(IPeriodPartRepository repository)
+    public DeletePeriodPartCommandHandler(KpiContext db)
     {
-        _repository = repository;
+        _db = db;
     }
 
-    public async Task<Result<IError>> Handle(DeletePeriodPartCommand request, CancellationToken cancellationToken)
+    protected override async Task Handle(DeletePeriodPartCommand request, CancellationToken cancellationToken)
     {
-        return await _repository.DeleteAsync(request.PartId);
+        var part = await _db.PeriodParts
+            .FindAsync(new object?[] { request.PartId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
+
+        _db.PeriodParts.Remove(part);
+
+        await _db.SaveChangesAsync(cancellationToken);
     }
 }

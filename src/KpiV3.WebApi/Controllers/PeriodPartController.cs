@@ -1,7 +1,7 @@
-﻿using KpiV3.Domain.PeriodParts.Commands;
+﻿using Amazon.Auth.AccessControlPolicy;
+using KpiV3.Domain.PeriodParts.Commands;
 using KpiV3.Domain.PeriodParts.Queries;
 using KpiV3.WebApi.DataContracts.PeriodParts;
-using KpiV3.WebApi.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +11,6 @@ namespace KpiV3.WebApi.Controllers;
 [Authorize(Policy = "RootOnly")]
 [ApiController]
 [Route("api/[controller]")]
-[ApiVersion("3.0")]
 public class PeriodPartController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -25,10 +24,9 @@ public class PeriodPartController : ControllerBase
     [ProducesResponseType(200, Type = typeof(List<PeriodPartDto>))]
     public async Task<IActionResult> GetByPeriodIdAsync(Guid periodId)
     {
-        return await _mediator
-            .Send(new GetPeriodPartsQuery { PeriodId = periodId })
-            .MapAsync(parts => parts.Select(part => new PeriodPartDto(part)).ToList())
-            .MatchAsync(parts => Ok(parts), error => error.MapToActionResult());
+        var parts = await _mediator.Send(new GetPeriodPartsQuery { PeriodId = periodId });
+
+        return Ok(parts.Select(p => new PeriodPartDto(p)));
     }
 
     [HttpGet("{partId:guid}")]
@@ -36,10 +34,9 @@ public class PeriodPartController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<IActionResult> GetByIdAsync(Guid partId)
     {
-        return await _mediator
-            .Send(new GetPeriodPartQuery { PartId = partId })
-            .MapAsync(part => new PeriodPartDto(part))
-            .MatchAsync(part => Ok(part), error => error.MapToActionResult());
+        var part = await _mediator.Send(new GetPeriodPartQuery { PeriodPartId = partId });
+
+        return Ok(new PeriodPartDto(part));
     }
 
     [HttpPost]
@@ -47,10 +44,9 @@ public class PeriodPartController : ControllerBase
     [ProducesResponseType(400)]
     public async Task<IActionResult> CreateAsync([FromBody] CreatePeriodPartRequest request)
     {
-        return await _mediator
-            .Send(request.ToCommand())
-            .MapAsync(part => new PeriodPartDto(part))
-            .MatchAsync(part => Ok(part), error => error.MapToActionResult());
+        var part = await _mediator.Send(request.ToCommand());
+
+        return Ok(new PeriodPartDto(part));
     }
 
     [HttpPut("{partId:guid}")]
@@ -59,10 +55,9 @@ public class PeriodPartController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<IActionResult> UpdateAsync(Guid partId, [FromBody] UpdatePeriodPartRequest request)
     {
-        return await _mediator
-            .Send(request.ToCommand(partId))
-            .MapAsync(part => new PeriodPartDto(part))
-            .MatchAsync(part => Ok(part), error => error.MapToActionResult());
+        var part = await _mediator.Send(request.ToCommand(partId));
+
+        return Ok(new PeriodPartDto(part));
     }
 
     [HttpDelete("{partId:guid}")]
@@ -70,8 +65,8 @@ public class PeriodPartController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<IActionResult> DeleteAsync(Guid partId)
     {
-        return await _mediator
-            .Send(new DeletePeriodPartCommand { PartId = partId })
-            .MatchAsync(() => Ok(), error => error.MapToActionResult());
+        await _mediator.Send(new DeletePeriodPartCommand { PartId = partId });
+
+        return Ok();
     }
 }

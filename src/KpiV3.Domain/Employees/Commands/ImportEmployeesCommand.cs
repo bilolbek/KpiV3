@@ -1,118 +1,114 @@
-﻿using KpiV3.Domain.Positions.Commands;
+﻿using KpiV3.Domain.Employees.DataContracts;
+using KpiV3.Domain.Employees.Ports;
+using KpiV3.Domain.Employees.Services;
 using KpiV3.Domain.Positions.DataContracts;
-using KpiV3.Domain.Positions.Ports;
+using KpiV3.Domain.Specialties.DataContracts;
 using MediatR;
 
 namespace KpiV3.Domain.Employees.Commands;
 
-public record ImportedEmployee
-{
-    public string Email { get; set; } = default!;
-    public string FirstName { get; set; } = default!;
-    public string LastName { get; set; } = default!;
-    public string? MiddleName { get; set; }
-    public string Position { get; set; } = default!;
-}
-
-public record ImportEmployeesCommand : IRequest<Result<IError>>
+public record ImportEmployeesCommand : IRequest
 {
     public List<ImportedEmployee> Employees { get; init; } = default!;
 }
 
-public class ImportEmployeesCommandHandler : IRequestHandler<ImportEmployeesCommand, Result<IError>>
+public class ImportedEmployeesCommandHandler : AsyncRequestHandler<ImportEmployeesCommand>
 {
-    private readonly IPositionRepository _positionRepository;
-    private readonly IMediator _mediator;
+    private readonly KpiContext _db;
+    private readonly IGuidProvider _guidProvider;
+    private readonly IDateProvider _dateProvider;
+    private readonly IPasswordHasher _passwordHasher;
+    private readonly IPasswordGenerator _passwordGenerator;
+    private readonly EmployeeWelcomeService _employeeWelcomeService;
 
-    public ImportEmployeesCommandHandler(
-        IPositionRepository positionRepository,
-        IMediator mediator)
+    public ImportedEmployeesCommandHandler(
+        KpiContext db,
+        IGuidProvider guidProvider,
+        IDateProvider dateProvider,
+        IPasswordHasher passwordHasher,
+        IPasswordGenerator passwordGenerator,
+        EmployeeWelcomeService employeeWelcomeService)
     {
-        _positionRepository = positionRepository;
-        _mediator = mediator;
+        _db = db;
+        _guidProvider = guidProvider;
+        _dateProvider = dateProvider;
+        _passwordHasher = passwordHasher;
+        _passwordGenerator = passwordGenerator;
+        _employeeWelcomeService = employeeWelcomeService;
     }
 
-    public async Task<Result<IError>> Handle(ImportEmployeesCommand request, CancellationToken cancellationToken)
+    protected override async Task Handle(ImportEmployeesCommand request, CancellationToken cancellationToken)
     {
-        var context = new BulkContext(_positionRepository, _mediator);
+        await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
 
-        foreach (var employee in request.Employees)
-        {
-            var result = await context.RegisterEmployeeAsync(employee);
+        var positions = await GetPositionIdsDictionaryAsync(request, cancellationToken);
 
-            if (result.IsFailure)
+        var passwords = new Dictionary<Guid, string>();
+        var employees = request.Employees
+            .Select(e => (id: _guidProvider.New(), employee: e))
+            .Select(x => new Employee
             {
-                return result;
-            }
-        }
+                Id = x.id,
+                Email = x.employee.Email,
+                Name = x.employee.Name,
+                PasswordHash = _passwordHasher.Hash(passwords[x.id] = _passwordGenerator.Generate()),
+                PositionId = positions[x.employee.Position],
+                RegisteredDate = _dateProvider.Now(),
+            })
+            .ToList();
 
-        return Result<IError>.Ok();
+        _db.Employees.AddRange(employees);
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        await transaction.CommitAsync(cancellationToken);
+
+        await WelcomeImportedEmployeesAsync(passwords, employees, cancellationToken);
     }
 
-    private class BulkContext
+    private async Task WelcomeImportedEmployeesAsync(Dictionary<Guid, string> passwords, List<Employee> employees, CancellationToken cancellationToken)
     {
-        private readonly IPositionRepository _positionRepository;
-        private readonly IMediator _mediator;
-        private readonly Dictionary<string, Guid> _positionIds;
-
-        public BulkContext(
-            IPositionRepository positionRepository,
-            IMediator mediator)
+        foreach (var employee in employees)
         {
-            _positionRepository = positionRepository;
-            _mediator = mediator;
-            _positionIds = new();
+            await _employeeWelcomeService.SendWelcomeMessageAsync(employee, passwords[employee.Id], cancellationToken);
         }
+    }
 
-        public async Task<Result<IError>> RegisterEmployeeAsync(ImportedEmployee employee)
+    private async Task<Dictionary<string, Guid>> GetPositionIdsDictionaryAsync(
+        ImportEmployeesCommand request,
+        CancellationToken cancellationToken)
+    {
+        var requiredPositions = request.Employees
+            .Select(e => e.Position)
+            .ToHashSet();
+
+        var existingPositions = await _db.Positions
+            .Where(p => requiredPositions.Contains(p.Name))
+            .ToListAsync(cancellationToken);
+
+        var positions = existingPositions
+            .ToDictionary(p => p.Name, p => p.Id);
+
+        if (requiredPositions.Count != existingPositions.Count)
         {
-            return await GetPositionIdAsync(employee.Position)
-                .BindAsync(positionId => _mediator.Send(new RegisterEmployeeCommand
+            var positionsToCreate = requiredPositions
+                .Where(p => !existingPositions.Any(e => e.Name == p))
+                .Select(p => new Position
                 {
-                    Email = employee.Email,
-
-                    Name = new()
-                    {
-                        FirstName = employee.FirstName,
-                        LastName = employee.LastName,
-                        MiddleName = employee.MiddleName,
-                    },
-
-                    PositionId = positionId,
-                }));
-        }
-
-        private async Task<Result<Guid, IError>> GetPositionIdAsync(string positionName)
-        {
-            if (_positionIds.TryGetValue(positionName, out var positionId))
-            {
-                return Result<Guid, IError>.Ok(positionId);
-            }
-
-            return await TryFetchPositionId(positionName)
-                .BindFailureAsync(async error => error is NoEntity ?
-                    await CreatePositionAndItsIdAsync(positionName) :
-                    Result<Guid, IError>.Fail(error));
-        }
-
-        private async Task<Result<Guid, IError>> TryFetchPositionId(string positionName)
-        {
-            return await _positionRepository
-                .FindByNameAsync(positionName)
-                .TeeAsync(position => _positionIds[position.Name] = position.Id)
-                .MapAsync(position => position.Id);
-        }
-
-        private async Task<Result<Guid, IError>> CreatePositionAndItsIdAsync(string positionName)
-        {
-            return await _mediator
-                .Send(new CreatePositionCommand
-                {
-                    Name = positionName,
-                    Type = PositionType.Employee
+                    Id = _guidProvider.New(),
+                    Name = p,
+                    Type = PositionType.Employee,
+                    Specialties = new List<Specialty>(),
                 })
-                .TeeAsync(position => _positionIds[position.Name] = position.Id)
-                .MapAsync(position => position.Id);
+                .ToList();
+
+            _db.Positions.AddRange(positionsToCreate);
+
+            positionsToCreate.ForEach(p => positions[p.Name] = p.Id);
+
+            await _db.SaveChangesAsync(cancellationToken);
         }
+
+        return positions;
     }
 }

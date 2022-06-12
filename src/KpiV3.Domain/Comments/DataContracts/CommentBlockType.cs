@@ -3,4 +3,5 @@
 public enum CommentBlockType
 {
     Post,
+    Submission,
 }

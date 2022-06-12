@@ -1,32 +1,35 @@
 ﻿using KpiV3.Domain.Requirements.DataContracts;
-using KpiV3.Domain.Requirements.Ports;
 using MediatR;
 
 namespace KpiV3.Domain.Requirements.Commands;
 
-public record UpdateRequirementCommand : IRequest<Result<Requirement, IError>>
+public record UpdateRequirementCommand : IRequest<Requirement>
 {
-    public Guid RequirementId { get; set; }
-    public string? Note { get; set; }
-    public double Weight { get; set; }
+    public Guid RequirementId { get; init; }
+    public string? Note { get; init; }
+    public double Weight { get; init; }
 }
 
-public class UpdateRequirementCommandHandler : IRequestHandler<UpdateRequirementCommand, Result<Requirement, IError>>
+public class UpdateRequirementCommandHandler : IRequestHandler<UpdateRequirementCommand, Requirement>
 {
-    private readonly IRequirementRepository _repository;
+    private readonly KpiContext _db;
 
-    public UpdateRequirementCommandHandler(IRequirementRepository repository)
+    public UpdateRequirementCommandHandler(KpiContext db)
     {
-        _repository = repository;
+        _db = db;
     }
 
-    public async Task<Result<Requirement, IError>> Handle(UpdateRequirementCommand request, CancellationToken cancellationToken)
+    public async Task<Requirement> Handle(UpdateRequirementCommand request, CancellationToken cancellationToken)
     {
-        return await _repository
-            .FindByIdAsync(request.RequirementId)
-            .MapAsync(requirement => requirement with { Note = request.Note, Weight = request.Weight })
-            .BindAsync(requirement => _repository
-                .UpdateAsync(requirement)
-                .InsertSuccessAsync(() => requirement));
+        var requirement = await _db.Requirements
+            .FindAsync(new object?[] { request.RequirementId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
+
+        requirement.Weight = request.Weight;
+        requirement.Note = request.Note;
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        return requirement;
     }
 }

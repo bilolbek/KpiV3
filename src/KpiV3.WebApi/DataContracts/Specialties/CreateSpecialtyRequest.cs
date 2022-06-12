@@ -5,21 +5,20 @@ namespace KpiV3.WebApi.DataContracts.Specialties;
 
 public record CreateSpecialtyRequest
 {
-    [Required(AllowEmptyStrings = false)]
-    public string Name { get; set; } = default!;
+    public Guid PositionId { get; init; }
 
     [Required(AllowEmptyStrings = false)]
-    public string Description { get; set; } = default!;
-
-    public Guid PositionId { get; set; }
+    public string Name { get; init; } = default!;
+    
+    public string? Description { get; init; }
 
     public CreateSpecialtyCommand ToCommand()
     {
         return new CreateSpecialtyCommand
         {
+            PositionId = PositionId,
             Name = Name,
             Description = Description,
-            PositionId = PositionId,
         };
     }
 }

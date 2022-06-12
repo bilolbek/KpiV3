@@ -1,30 +1,34 @@
-﻿using KpiV3.Domain.Positions.DataContracts;
-using KpiV3.Domain.Positions.Ports;
-using MediatR;
+﻿using MediatR;
 
 namespace KpiV3.Domain.Positions.Commands;
 
-public record DeletePositionCommand : IRequest<Result<IError>>
+public record DeletePositionCommand : IRequest
 {
-    public Guid PositionId { get; set; }
+    public Guid PositionId { get; init; }
 }
 
-public class DeletePositionCommandHandler : IRequestHandler<DeletePositionCommand, Result<IError>>
+public class DeletePositionCommandHandler : AsyncRequestHandler<DeletePositionCommand>
 {
-    private readonly IPositionRepository _positionRepository;
+    private readonly KpiContext _db;
 
-    public DeletePositionCommandHandler(IPositionRepository positionRepository)
+    public DeletePositionCommandHandler(KpiContext db)
     {
-        _positionRepository = positionRepository;
+        _db = db;
     }
 
-    public async Task<Result<IError>> Handle(DeletePositionCommand request, CancellationToken cancellationToken)
+    protected override async Task Handle(DeletePositionCommand request, CancellationToken cancellationToken)
     {
-        return await _positionRepository
-            .FindByIdAsync(request.PositionId)
-            .BindAsync(position => position.Type is PositionType.Root ?
-                Result<IError>.Fail(new BusinessRuleViolation("Root position cannot be deleted")) :
-                Result<IError>.Ok())
-            .BindAsync(() => _positionRepository.DeleteAsync(request.PositionId));
+        var position = await _db.Positions
+            .FindAsync(new object?[] { request.PositionId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
+
+        if (position.Type is DataContracts.PositionType.Root)
+        {
+            throw new BusinessLogicException("It's not allowed to delete root positions");
+        }
+
+        _db.Positions.Remove(position);
+
+        await _db.SaveChangesAsync(cancellationToken);
     }
 }

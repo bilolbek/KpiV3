@@ -1,4 +1,5 @@
 ﻿using KpiV3.Domain.Employees.Commands;
+using KpiV3.Domain.Employees.DataContracts;
 using System.ComponentModel.DataAnnotations;
 
 namespace KpiV3.WebApi.DataContracts.Employees;
@@ -24,9 +25,12 @@ public record CsvImportedEmployee
         return new ImportedEmployee()
         {
             Email = Email.Trim(),
-            FirstName = FirstName.Trim(),
-            LastName = LastName.Trim(),
-            MiddleName = MiddleName?.Trim(),
+            Name = new()
+            {
+                FirstName = FirstName.Trim(),
+                LastName = LastName.Trim(),
+                MiddleName = MiddleName?.Trim(),
+            },
             Position = Position.Trim(),
         };
     }

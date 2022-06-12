@@ -1,40 +1,34 @@
-﻿using KpiV3.Domain.Common;
+﻿using KpiV3.Domain.Common.DataContracts;
 using KpiV3.Domain.Periods.DataContracts;
-using KpiV3.Domain.Periods.Ports;
 using MediatR;
 
 namespace KpiV3.Domain.Periods.Commands;
 
-public record UpdatePeriodCommand : IRequest<Result<Period, IError>>
+public record UpdatePeriodCommand : IRequest<Period>
 {
-    public Guid PeriodId { get; set; }
-    public string Name { get; set; } = default!;
-    public DateTimeOffset From { get; set; }
-    public DateTimeOffset To { get; set; }
+    public Guid PeriodId { get; init; }
+    public string Name { get; init; } = default!;
+    public DateRange Range { get; init; } = default!;
 }
 
-public class UpdatePeriodCommandHandler : IRequestHandler<UpdatePeriodCommand, Result<Period, IError>>
+public class UpdatePeriodCommandHandler : IRequestHandler<UpdatePeriodCommand, Period>
 {
-    private readonly IPeriodRepository _repository;
+    private readonly KpiContext _db;
 
-    public UpdatePeriodCommandHandler(IPeriodRepository repository)
+    public UpdatePeriodCommandHandler(KpiContext db)
     {
-        _repository = repository;
+        _db = db;
     }
 
-    public async Task<Result<Period, IError>> Handle(UpdatePeriodCommand request, CancellationToken cancellationToken)
+    public async Task<Period> Handle(UpdatePeriodCommand request, CancellationToken cancellationToken)
     {
-        return await Ensure
-            .That(request.From < request.To, "From must be less than To")
-            .InsertSuccess(() => new Period
-            {
-                Id = request.PeriodId,
-                Name = request.Name,
-                From = request.From,
-                To = request.To,
-            })
-            .BindAsync(period => _repository
-                .UpdateAsync(period)
-                .InsertSuccessAsync(() => period));
+        var period = await _db.Periods
+            .FindAsync(new object?[] { request.PeriodId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
+
+        period.Name = request.Name;
+        period.Range = request.Range;
+
+        return period;
     }
 }

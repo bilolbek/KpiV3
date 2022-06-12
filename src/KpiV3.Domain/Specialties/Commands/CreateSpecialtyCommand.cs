@@ -1,31 +1,30 @@
-﻿using KpiV3.Domain.Common;
+﻿using KpiV3.Domain.Common.Ports;
 using KpiV3.Domain.Specialties.DataContracts;
-using KpiV3.Domain.Specialties.Ports;
 using MediatR;
 
 namespace KpiV3.Domain.Specialties.Commands;
 
-public record CreateSpecialtyCommand : IRequest<Result<Specialty, IError>>
+public record CreateSpecialtyCommand : IRequest<Specialty>
 {
-    public string Name { get; set; } = default!;
-    public string Description { get; set; } = default!;
-    public Guid PositionId { get; set; }
+    public Guid PositionId { get; init; }
+    public string Name { get; init; } = default!;
+    public string? Description { get; init; }
 }
 
-public class CreateSpecialtyCommandHandler : IRequestHandler<CreateSpecialtyCommand, Result<Specialty, IError>>
+public class CreateSpecialtyCommandHandler : IRequestHandler<CreateSpecialtyCommand, Specialty>
 {
-    private readonly ISpecialtyRepository _repository;
+    private readonly KpiContext _db;
     private readonly IGuidProvider _guidProvider;
 
     public CreateSpecialtyCommandHandler(
-        ISpecialtyRepository repository, 
+        KpiContext db,
         IGuidProvider guidProvider)
     {
-        _repository = repository;
+        _db = db;
         _guidProvider = guidProvider;
     }
 
-    public async Task<Result<Specialty, IError>> Handle(CreateSpecialtyCommand request, CancellationToken cancellationToken)
+    public async Task<Specialty> Handle(CreateSpecialtyCommand request, CancellationToken cancellationToken)
     {
         var specialty = new Specialty
         {
@@ -35,8 +34,10 @@ public class CreateSpecialtyCommandHandler : IRequestHandler<CreateSpecialtyComm
             PositionId = request.PositionId,
         };
 
-        return await _repository
-            .InsertAsync(specialty)
-            .InsertSuccessAsync(() => specialty);
+        _db.Specialties.Add(specialty);
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        return specialty;
     }
 }

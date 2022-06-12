@@ -3,7 +3,7 @@
   <PropertyGroup Label="Globals">
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
-    <ProjectGuid>53f996cd-b826-4b0e-96d7-b15103ca3e9f</ProjectGuid>
+    <ProjectGuid>10596a52-0ac6-4277-a571-4f532a529466</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
     <DockerServiceName>kpiv3.webapi</DockerServiceName>

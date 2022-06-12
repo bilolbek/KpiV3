@@ -1,36 +1,39 @@
-﻿using KpiV3.Domain.Common;
-using KpiV3.Domain.Requirements.DataContracts;
-using KpiV3.Domain.Requirements.Ports;
+﻿using KpiV3.Domain.Requirements.DataContracts;
 using MediatR;
 
 namespace KpiV3.Domain.Requirements.Commands;
 
-public record CreateRequirementCommand : IRequest<Result<Requirement, IError>>
+public record CreateRequirementCommand : IRequest<Requirement>
 {
-    public Guid PeriodPartId { get; set; }
-    public Guid SpecialtyId { get; set; }
-    public Guid IndicatorId { get; set; }
-    public string? Note { get; set; }
-    public double Weight { get; set; }
+    public Guid SpecialtyId { get; init; }
+    public Guid PeriodPartId { get; init; }
+    public Guid IndicatorId { get; init; }
+    public string? Note { get; init; }
 }
 
-public class CreateRequirementCommandHandler : IRequestHandler<CreateRequirementCommand, Result<Requirement, IError>>
+public class CreateRequirementCommandHandler : IRequestHandler<CreateRequirementCommand, Requirement>
 {
-    private readonly IRequirementRepository _requirementRepository;
+    private readonly KpiContext _db;
     private readonly IGuidProvider _guidProvider;
-    private readonly ITransactionProvider _transactionProvider;
 
     public CreateRequirementCommandHandler(
-        IRequirementRepository requirementRepository,
-        IGuidProvider guidProvider,
-        ITransactionProvider transactionProvider)
+        KpiContext db,
+        IGuidProvider guidProvider)
     {
-        _requirementRepository = requirementRepository;
+        _db = db;
         _guidProvider = guidProvider;
-        _transactionProvider = transactionProvider;
     }
 
-    public async Task<Result<Requirement, IError>> Handle(CreateRequirementCommand request, CancellationToken cancellationToken)
+    public async Task<Requirement> Handle(CreateRequirementCommand request, CancellationToken cancellationToken)
+    {
+        await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
+
+        await EnsureTotalWeightOfRequirementsDoesNotExceed100Async(request, cancellationToken);
+
+        return await CreateRequirementAsync(request, cancellationToken);
+    }
+
+    private async Task<Requirement> CreateRequirementAsync(CreateRequirementCommand request, CancellationToken cancellationToken)
     {
         var requirement = new Requirement
         {
@@ -38,28 +41,32 @@ public class CreateRequirementCommandHandler : IRequestHandler<CreateRequirement
             IndicatorId = request.IndicatorId,
             PeriodPartId = request.PeriodPartId,
             SpecialtyId = request.SpecialtyId,
-            Weight = request.Weight,
             Note = request.Note,
         };
 
-        return await _transactionProvider
-            .RunAsync(() => EnsureTotalWeightIsNotGreaterThan100(request)
-                .BindAsync(() => _requirementRepository.InsertAsync(requirement)))
-            .InsertSuccessAsync(() => requirement);
+        _db.Requirements.Add(requirement);
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        return requirement;
     }
 
-    private async Task<Result<IError>> EnsureTotalWeightIsNotGreaterThan100(CreateRequirementCommand request)
+    private async Task EnsureTotalWeightOfRequirementsDoesNotExceed100Async(
+        CreateRequirementCommand request,
+        CancellationToken cancellationToken)
     {
-        return await CalculcateTotalWeight(request)
-            .BindAsync(total => total + request.Weight > 100
-                ? Result<IError>.Fail(new BusinessRuleViolation("Total weight is greater than 100"))
-                : Result<IError>.Ok());
-    }
+        var part = await _db.PeriodParts
+            .FindAsync(new object?[] { request.PeriodPartId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
 
-    private async Task<Result<double, IError>> CalculcateTotalWeight(CreateRequirementCommand request)
-    {
-        return await _requirementRepository
-            .FindBySpecialtyIdAndPeriodPartIdAsync(request.SpecialtyId, request.PeriodPartId)
-            .MapAsync(requirements => requirements.Sum(r => r.Weight));
+        var totalWeight = await _db.Requirements
+            .Where(p => p.PeriodPart.PeriodId == part.PeriodId)
+            .Where(p => p.SpecialtyId == request.SpecialtyId)
+            .SumAsync(p => p.Weight, cancellationToken);
+
+        if (totalWeight > 100.0)
+        {
+            throw new BusinessLogicException("Total weight of requirements cannot be more than 100");
+        }
     }
 }

@@ -2,12 +2,8 @@
 
 namespace KpiV3.WebApi.DataContracts.Specialties;
 
-public class SpecialtyDto
+public record SpecialtyDto
 {
-    public SpecialtyDto()
-    {
-    }
-
     public SpecialtyDto(Specialty specialty)
     {
         Id = specialty.Id;
@@ -16,8 +12,8 @@ public class SpecialtyDto
         PositionId = specialty.PositionId;
     }
 
-    public Guid Id { get; set; }
-    public string Name { get; set; } = default!;
-    public string Description { get; set; } = default!;
-    public Guid PositionId { get; set; }
+    public Guid Id { get; init; }
+    public string Name { get; init; } = default!;
+    public string Description { get; init; } = default!;
+    public Guid PositionId { get; init; }
 }

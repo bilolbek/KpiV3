@@ -1,38 +1,37 @@
 ﻿using KpiV3.Domain.Indicators.DataContracts;
-using KpiV3.Domain.Indicators.Ports;
 using MediatR;
 
 namespace KpiV3.Domain.Indicators.Commands;
 
-public record UpdateIndicatorCommand : IRequest<Result<Indicator, IError>>
+public record UpdateIndicatorCommand : IRequest<Indicator>
 {
-    public Guid IndicatorId { get; set; }
-    public string Name { get; set; } = default!;
-    public string Description { get; set; } = default!;
-    public string Comment { get; set; } = default!;
+    public Guid IndicatorId { get; init; }
+    public string Name { get; init; } = default!;
+    public string Description { get; init; } = default!;
+    public string? Comment { get; set; }
 }
 
-public class UpdateIndicatorCommandHandler : IRequestHandler<UpdateIndicatorCommand, Result<Indicator, IError>>
+public class UpdateIndicatorCommandHandler : IRequestHandler<UpdateIndicatorCommand, Indicator>
 {
-    private readonly IIndicatorRepository _repository;
+    private readonly KpiContext _db;
 
-    public UpdateIndicatorCommandHandler(IIndicatorRepository repository)
+    public UpdateIndicatorCommandHandler(KpiContext db)
     {
-        _repository = repository;
+        _db = db;
     }
 
-    public async Task<Result<Indicator, IError>> Handle(UpdateIndicatorCommand request, CancellationToken cancellationToken)
+    public async Task<Indicator> Handle(UpdateIndicatorCommand request, CancellationToken cancellationToken)
     {
-        var indicator = new Indicator
-        {
-            Id = request.IndicatorId,
-            Name = request.Name,
-            Description = request.Description,
-            Comment = request.Comment,
-        };
+        var indicator = await _db.Indicators
+            .FindAsync(new object?[] { request.IndicatorId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
 
-        return await _repository
-            .UpdateAsync(indicator)
-            .InsertSuccessAsync(() => indicator);
+        indicator.Name = request.Name;
+        indicator.Description = request.Description;
+        indicator.Comment = request.Comment;
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        return indicator;
     }
 }

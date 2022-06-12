@@ -4,5 +4,5 @@ namespace KpiV3.Domain;
 
 public static class DomainAssembly
 {
-    public static Assembly Instance => typeof(DomainAssembly).Assembly;
+    public static Assembly Instance { get; } = typeof(DomainAssembly).Assembly;
 }

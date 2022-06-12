@@ -1,18 +1,16 @@
-﻿using KpiV3.Domain.DataContracts.Models;
+﻿using KpiV3.Domain.Common.DataContracts;
 using KpiV3.Domain.Positions.Commands;
 using KpiV3.Domain.Positions.Queries;
 using KpiV3.WebApi.DataContracts.Positions;
-using KpiV3.WebApi.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KpiV3.WebApi.Controllers;
 
-[Authorize(Policy = "RootOnly")]
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
-[ApiVersion("3.0")]
 public class PositionController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -22,58 +20,58 @@ public class PositionController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet]
-    [ProducesResponseType(200, Type = typeof(Page<PositionDto>))]
-    [ProducesResponseType(400)]
-    public async Task<IActionResult> GetAsync([FromQuery] GetPositionsRequest request)
-    {
-        return await _mediator
-            .Send(request.ToQuery())
-            .MapAsync(positions => positions.Map(p => new PositionDto(p)))
-            .MatchAsync(positions => Ok(positions), error => error.MapToActionResult());
-    }
-
     [HttpGet("{positionId:guid}")]
     [ProducesResponseType(200, Type = typeof(PositionDto))]
     [ProducesResponseType(404)]
-    public async Task<IActionResult> GetByIdAsync(Guid positionId)
+    public async Task<IActionResult> GetAsync(Guid positionId, CancellationToken cancellationToken)
     {
-        return await _mediator
-            .Send(new GetPositionQuery { PositionId = positionId })
-            .MapAsync(position => new PositionDto(position))
-            .MatchAsync(position => Ok(position), error => error.MapToActionResult());
+        var position = await _mediator.Send(new GetPositionQuery
+        {
+            PositionId = positionId
+        }, cancellationToken);
+
+        return Ok(new PositionDto(position));
     }
 
-    [HttpPost]
+    [HttpGet]
+    [ProducesResponseType(200, Type = typeof(Page<PositionDto>))]
+    public async Task<IActionResult> GetAsync([FromQuery] GetPositionsRequest request, CancellationToken cancellationToken)
+    {
+        var positions = await _mediator.Send(request.ToQuery(), cancellationToken);
+
+        return Ok(positions.Map(p => new PositionDto(p)));
+    }
+
+    [Authorize(Policy = "RootOnly")]
     [ProducesResponseType(200, Type = typeof(PositionDto))]
     [ProducesResponseType(400)]
+    [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] CreatePositionRequest request)
     {
-        return await _mediator
-            .Send(request.ToCommand())
-            .MapAsync(position => new PositionDto(position))
-            .MatchAsync(position => Ok(position), error => error.MapToActionResult());
+        var position = await _mediator.Send(request.ToCommand());
+
+        return Ok(new PositionDto(position));
     }
 
-    [HttpDelete("{positionId:guid}")]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(404)]
-    public async Task<IActionResult> DeleteAsync([FromRoute] Guid positionId)
-    {
-        return await _mediator
-            .Send(new DeletePositionCommand { PositionId = positionId })
-            .MatchAsync(() => Ok(), error => error.MapToActionResult());
-    }
-
-    [HttpPut("{positionId:guid}")]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(404)]
+    [Authorize(Policy = "RootOnly")]
+    [ProducesResponseType(200, Type = typeof(PositionDto))]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> UpdateAsync(Guid positionId, UpdatePositionRequest request)
+    [ProducesResponseType(404)]
+    [HttpPut("{positionId:guid}")]
+    public async Task<IActionResult> UpdateAsync(Guid positionId, [FromBody] UpdatePositionRequest request)
     {
-        return await _mediator
-            .Send(request.ToCommand(positionId))
-            .MapAsync(position => new PositionDto(position))
-            .MatchAsync(position => Ok(position), error => error.MapToActionResult());
+        var position = await _mediator.Send(request.ToCommand(positionId));
+
+        return Ok(new PositionDto(position));
+    }
+
+    [Authorize(Policy = "RootOnly")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    [HttpDelete("{positionId:guid}")]
+    public async Task<IActionResult> DeleteAsync(Guid positionId)
+    {
+        await _mediator.Send(new DeletePositionCommand { PositionId = positionId });
+        return Ok();
     }
 }

@@ -1,30 +1,33 @@
-﻿using KpiV3.Domain.DataContracts.Models;
-using KpiV3.Domain.Employees.Ports;
+﻿using KpiV3.Domain.Common.DataContracts;
 using MediatR;
 
 namespace KpiV3.Domain.Employees.Commands;
 
-public record UpdateProfileCommand : IRequest<Result<IError>>
+public record UpdateProfileCommand : IRequest
 {
-    public Guid EmployeeId { get; set; }
-    public Name Name { get; set; }
-    public Guid? AvatarId { get; set; }
+    public Guid EmployeeId { get; init; }
+    public Name Name { get; init; } = default!;
+    public Guid? AvatarId { get; init; }
 }
 
-public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, Result<IError>>
+public class UpdateProfileCommandHandler : AsyncRequestHandler<UpdateProfileCommand>
 {
-    private readonly IEmployeeRepository _employeeRepository;
+    private readonly KpiContext _db;
 
-    public UpdateProfileCommandHandler(IEmployeeRepository employeeRepository)
+    public UpdateProfileCommandHandler(KpiContext db)
     {
-        _employeeRepository = employeeRepository;
+        _db = db;
     }
 
-    public async Task<Result<IError>> Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
+    protected override async Task Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
     {
-        return await _employeeRepository
-            .FindByIdAsync(request.EmployeeId)
-            .MapAsync(employee => employee with { Name = request.Name, AvatarId = request.AvatarId })
-            .BindAsync(employee => _employeeRepository.UpdateAsync(employee));
+        var employee = await _db.Employees
+            .FindAsync(new object?[] { request.EmployeeId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
+
+        employee.Name = request.Name;
+        employee.AvatarId = request.AvatarId;
+
+        await _db.SaveChangesAsync(cancellationToken);
     }
 }

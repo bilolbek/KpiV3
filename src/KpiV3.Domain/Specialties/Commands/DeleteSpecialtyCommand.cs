@@ -1,24 +1,29 @@
-﻿using KpiV3.Domain.Specialties.Ports;
-using MediatR;
+﻿using MediatR;
 
 namespace KpiV3.Domain.Specialties.Commands;
 
-public record DeleteSpecialtyCommand : IRequest<Result<IError>>
+public record DeleteSpecialtyCommand : IRequest
 {
     public Guid SpecialtyId { get; set; }
 }
 
-public record DeleteSpecialtyCommandHandler : IRequestHandler<DeleteSpecialtyCommand, Result<IError>>
+public class DeleteSpecialtyCommandHandler : AsyncRequestHandler<DeleteSpecialtyCommand>
 {
-    private readonly ISpecialtyRepository _repository;
+    private readonly KpiContext _db;
 
-    public DeleteSpecialtyCommandHandler(ISpecialtyRepository repository)
+    public DeleteSpecialtyCommandHandler(KpiContext db)
     {
-        _repository = repository;
+        _db = db;
     }
 
-    public async Task<Result<IError>> Handle(DeleteSpecialtyCommand request, CancellationToken cancellationToken)
+    protected override async Task Handle(DeleteSpecialtyCommand request, CancellationToken cancellationToken)
     {
-        return await _repository.DeleteAsync(request.SpecialtyId);
+        var specialty = await _db.Specialties
+            .FindAsync(new object?[] { request.SpecialtyId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
+
+        _db.Specialties.Remove(specialty);
+
+        await _db.SaveChangesAsync(cancellationToken);
     }
 }

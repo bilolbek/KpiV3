@@ -1,11 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace KpiV3.WebApi.Authentication.DataContracts;
 
-namespace KpiV3.WebApi.Authentication.DataContracts;
-
-public readonly record struct Credentials
+public record Credentials
 {
-    [Required]
-    public string Email { get; init; }
-    [Required]
-    public string Password { get; init; }
+    public string Email { get; init; } = default!;
+    public string Password { get; init; } = default!;
 }

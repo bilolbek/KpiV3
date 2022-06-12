@@ -2,12 +2,8 @@
 
 namespace KpiV3.WebApi.DataContracts.Indicators;
 
-public class IndicatorDto
+public record IndicatorDto
 {
-    public IndicatorDto()
-    {
-    }
-
     public IndicatorDto(Indicator indicator)
     {
         Id = indicator.Id;
@@ -17,8 +13,7 @@ public class IndicatorDto
     }
 
     public Guid Id { get; set; }
-
     public string Name { get; set; } = default!;
     public string Description { get; set; } = default!;
-    public string Comment { get; set; } = default!;
+    public string? Comment { get; set; }
 }

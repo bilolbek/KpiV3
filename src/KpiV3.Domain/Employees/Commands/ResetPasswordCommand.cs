@@ -1,47 +1,45 @@
-﻿using KpiV3.Domain.Employees.DataContracts;
-using KpiV3.Domain.Employees.Ports;
+﻿using KpiV3.Domain.Employees.Ports;
+using KpiV3.Domain.Employees.Services;
 using MediatR;
 
 namespace KpiV3.Domain.Employees.Commands;
 
-public record ResetPasswordCommand : IRequest<Result<IError>>
+public record ResetPasswordCommand : IRequest
 {
-    public Guid EmployeeId { get; set; }
+    public Guid EmployeeId { get; init; }
 }
 
-public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, Result<IError>>
+public class ResetPasswordCommandHandler : AsyncRequestHandler<ResetPasswordCommand>
 {
-    private readonly IEmployeeRepository _employeeRepository;
-    private readonly IPasswordGenerator _passwordGenerator;
+    private readonly KpiContext _db;
     private readonly IPasswordHasher _passwordHasher;
-    private readonly IEmailSender _emailSender;
+    private readonly IPasswordGenerator _passwordGenerator;
+    private readonly PasswordChangeNotificationService _passwordChangeNotificationService;
 
     public ResetPasswordCommandHandler(
-        IEmployeeRepository employeeRepository,
-        IPasswordGenerator passwordGenerator,
+        KpiContext db,
         IPasswordHasher passwordHasher,
-        IEmailSender emailSender)
+        IPasswordGenerator passwordGenerator,
+        PasswordChangeNotificationService passwordChangeNotificationService)
     {
-        _employeeRepository = employeeRepository;
-        _passwordGenerator = passwordGenerator;
+        _db = db;
         _passwordHasher = passwordHasher;
-        _emailSender = emailSender;
+        _passwordGenerator = passwordGenerator;
+        _passwordChangeNotificationService = passwordChangeNotificationService;
     }
 
-    public async Task<Result<IError>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
+    protected override async Task Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
-        var password = _passwordGenerator.GeneratePassword();
+        var employee = await _db.Employees
+            .FindAsync(new object?[] { request.EmployeeId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
 
-        return await _employeeRepository
-            .FindByIdAsync(request.EmployeeId)
-            .MapAsync(employee => employee with { PasswordHash = _passwordHasher.Hash(password) })
-            .BindAsync(employee => _employeeRepository
-                .UpdateAsync(employee)
-                .BindAsync(() => _emailSender.SendAsync(new EmailMessage
-                {
-                    Subject = "Password reset",
-                    Body = $"Your password has been reset. Your new password: {password}",
-                    Recipient = employee.Email,
-                })));
+        var newPassword = _passwordGenerator.Generate();
+
+        employee.PasswordHash = _passwordHasher.Hash(newPassword);
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        await _passwordChangeNotificationService.NotifyPasswordChangedAsync(employee, newPassword, cancellationToken);
     }
 }

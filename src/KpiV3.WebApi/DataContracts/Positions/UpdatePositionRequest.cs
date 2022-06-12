@@ -1,12 +1,10 @@
 ﻿using KpiV3.Domain.Positions.Commands;
-using System.ComponentModel.DataAnnotations;
 
 namespace KpiV3.WebApi.DataContracts.Positions;
 
 public record UpdatePositionRequest
 {
-    [Required(AllowEmptyStrings = false)]
-    public string Name { get; set; } = default!;
+    public string Name { get; init; } = default!;
 
     public UpdatePositionCommand ToCommand(Guid positionId)
     {

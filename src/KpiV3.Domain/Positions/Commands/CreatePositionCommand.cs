@@ -1,40 +1,42 @@
-﻿using KpiV3.Domain.Common;
-using KpiV3.Domain.Positions.DataContracts;
-using KpiV3.Domain.Positions.Ports;
+﻿using KpiV3.Domain.Positions.DataContracts;
+using KpiV3.Domain.Specialties.DataContracts;
 using MediatR;
 
 namespace KpiV3.Domain.Positions.Commands;
 
-public record CreatePositionCommand : IRequest<Result<Position, IError>>
+public record CreatePositionCommand : IRequest<Position>
 {
     public string Name { get; init; } = default!;
-    public PositionType Type { get; init; } = default!;
+    public PositionType Type { get; init; }
 }
 
-public class CreatePositionCommandHandler : IRequestHandler<CreatePositionCommand, Result<Position, IError>>
+public class CreatePositionCommandHandler : IRequestHandler<CreatePositionCommand, Position>
 {
+    private readonly KpiContext _db;
     private readonly IGuidProvider _guidProvider;
-    private readonly IPositionRepository _positionRepository;
 
     public CreatePositionCommandHandler(
-        IGuidProvider guidProvider,
-        IPositionRepository positionRepository)
+        KpiContext db,
+        IGuidProvider guidProvider)
     {
+        _db = db;
         _guidProvider = guidProvider;
-        _positionRepository = positionRepository;
     }
 
-    public async Task<Result<Position, IError>> Handle(CreatePositionCommand request, CancellationToken cancellationToken)
+    public async Task<Position> Handle(CreatePositionCommand request, CancellationToken cancellationToken)
     {
         var position = new Position
         {
             Id = _guidProvider.New(),
             Name = request.Name,
             Type = request.Type,
+            Specialties = new List<Specialty>(),
         };
 
-        return await _positionRepository
-            .InsertAsync(position)
-            .InsertSuccessAsync(() => position);
+        _db.Positions.Add(position);
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        return position;
     }
 }

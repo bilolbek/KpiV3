@@ -1,28 +1,29 @@
-﻿using KpiV3.Domain.Posts.Ports;
-using MediatR;
+﻿using MediatR;
 
 namespace KpiV3.Domain.Posts.Commands;
 
-public record DeletePostCommand : IRequest<Result<IError>>
+public record DeletePostCommand : IRequest
 {
-    public Guid PostId { get; set; }
-    public Guid IdOfWhoWantsToDelete { get; set; }
+    public Guid PostId { get; init; }
 }
 
-public class DeletePostCommandHandler : IRequestHandler<DeletePostCommand, Result<IError>>
+public class DeletePostCommandHandler : AsyncRequestHandler<DeletePostCommand>
 {
-    private readonly IPostRepository _repository;
+    private readonly KpiContext _db;
 
-    public DeletePostCommandHandler(IPostRepository repository)
+    public DeletePostCommandHandler(KpiContext db)
     {
-        _repository = repository;
+        _db = db;
     }
 
-    public async Task<Result<IError>> Handle(DeletePostCommand request, CancellationToken cancellationToken)
+    protected override async Task Handle(DeletePostCommand request, CancellationToken cancellationToken)
     {
-        return await _repository
-            .FindByIdAsync(request.PostId)
-            .BindAsync(post => post.CanBeModifiedBy(request.IdOfWhoWantsToDelete))
-            .BindAsync(post => _repository.DeleteAsync(post.Id));
+        var post = await _db.Posts
+            .FindAsync(new object?[] { request.PostId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
+
+        _db.Posts.Remove(post);
+
+        await _db.SaveChangesAsync(cancellationToken);
     }
 }

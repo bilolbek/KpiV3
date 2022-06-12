@@ -1,38 +1,35 @@
 ﻿using KpiV3.Domain.Specialties.DataContracts;
-using KpiV3.Domain.Specialties.Ports;
 using MediatR;
 
 namespace KpiV3.Domain.Specialties.Commands;
 
-public record UpdateSpecialtyCommand : IRequest<Result<Specialty, IError>>
+public record UpdateSpecialtyCommand : IRequest<Specialty>
 {
-    public Guid SpecialtyId { get; set; }
-    public string Name { get; set; } = default!;
-    public string Description { get; set; } = default!;
-    public Guid PositionId { get; set; }
+    public Guid SpecialtyId { get; init; }
+    public string Name { get; init; } = default!;
+    public string? Description { get; set; }
 }
 
-public class UpdateSpecialtyCommandHandler : IRequestHandler<UpdateSpecialtyCommand, Result<Specialty, IError>>
+public class UpdateSpecialtyCommandHandler : IRequestHandler<UpdateSpecialtyCommand, Specialty>
 {
-    private readonly ISpecialtyRepository _repository;
+    private readonly KpiContext _db;
 
-    public UpdateSpecialtyCommandHandler(ISpecialtyRepository repository)
+    public UpdateSpecialtyCommandHandler(KpiContext db)
     {
-        _repository = repository;
+        _db = db;
     }
 
-    public async Task<Result<Specialty, IError>> Handle(UpdateSpecialtyCommand request, CancellationToken cancellationToken)
+    public async Task<Specialty> Handle(UpdateSpecialtyCommand request, CancellationToken cancellationToken)
     {
-        var specialty = new Specialty
-        {
-            Id = request.SpecialtyId,
-            Name = request.Name,
-            Description = request.Description,
-            PositionId = request.PositionId
-        };
+        var specialty = await _db.Specialties
+            .FindAsync(new object?[] { request.SpecialtyId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
 
-        return await _repository
-            .UpdateAsync(specialty)
-            .InsertSuccessAsync(() => specialty);
+        specialty.Name = request.Name;
+        specialty.Description = request.Description;
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        return specialty;
     }
 }

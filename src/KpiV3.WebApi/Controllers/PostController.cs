@@ -1,19 +1,16 @@
-﻿using KpiV3.Domain.DataContracts.Models;
-using KpiV3.Domain.Posts.Commands;
+﻿using KpiV3.Domain.Posts.Commands;
 using KpiV3.Domain.Posts.Queries;
-using KpiV3.WebApi.Authentication;
+using KpiV3.WebApi.Authentication.Services;
 using KpiV3.WebApi.DataContracts.Posts;
-using KpiV3.WebApi.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KpiV3.WebApi.Controllers;
 
-[Authorize]
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
-[ApiVersion("3.0")]
 public class PostController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -28,58 +25,44 @@ public class PostController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(200, Type = typeof(Page<PostDto>))]
-    public async Task<IActionResult> GetAsync([FromQuery] GetPostsRequest request)
+    public async Task<IActionResult> GetAsync([FromQuery] GetPostsRequest request, CancellationToken cancellationToken)
     {
-        return await _mediator
-            .Send(request.ToQuery())
-            .MapAsync(posts => posts.Map(post => new PostDto(post)))
-            .MatchAsync(posts => Ok(posts), error => error.MapToActionResult());
+        var posts = await _mediator.Send(request.ToQuery(), cancellationToken);
+
+        return Ok(posts.Map(p => new PostDto(p)));
     }
 
     [HttpGet("{postId:guid}")]
-    [ProducesResponseType(200, Type = typeof(PostDto))]
-    [ProducesResponseType(404)]
-    public async Task<IActionResult> GetByIdAsync(Guid postId)
+    public async Task<IActionResult> GetAsync(Guid postId, CancellationToken cancellationToken)
     {
-        return await _mediator
-            .Send(new GetPostQuery { PostId = postId })
-            .MapAsync(post => new PostDto(post))
-            .MatchAsync(post => Ok(post), error => error.MapToActionResult());
+        var post = await _mediator.Send(new GetPostQuery { PostId = postId }, cancellationToken);
+
+        return Ok(new PostDto(post));
     }
 
-    [HttpPost]
     [Authorize(Policy = "RootOnly")]
-    [ProducesResponseType(200, Type = typeof(PostDto))]
-    [ProducesResponseType(400)]
+    [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] CreatePostRequest request)
     {
-        return await _mediator
-            .Send(request.ToCommand(_employeeAccessor.EmployeeId))
-            .MapAsync(post => new PostDto(post))
-            .MatchAsync(post => Ok(post), error => error.MapToActionResult());
+        var post = await _mediator.Send(request.ToCommand(_employeeAccessor.EmployeeId));
+
+        return Ok(new PostDto(post));
     }
 
-    [HttpPut("{postId:guid}")]
     [Authorize(Policy = "RootOnly")]
-    [ProducesResponseType(200, Type = typeof(PostDto))]
-    [ProducesResponseType(400)]
+    [HttpPut("{postId:guid}")]
     public async Task<IActionResult> UpdateAsync(Guid postId, [FromBody] UpdatePostRequest request)
     {
-        return await _mediator
-            .Send(request.ToCommand(postId, _employeeAccessor.EmployeeId))
-            .MapAsync(post => new PostDto(post))
-            .MatchAsync(post => Ok(post), error => error.MapToActionResult());
+        var post = await _mediator.Send(request.ToCommand(postId));
+
+        return Ok(new PostDto(post));
     }
 
-    [HttpDelete("{postId:guid}")]
     [Authorize(Policy = "RootOnly")]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(404)]
+    [HttpDelete("{postId:guid}")]
     public async Task<IActionResult> DeleteAsync(Guid postId)
     {
-        return await _mediator
-            .Send(new DeletePostCommand { PostId = postId, IdOfWhoWantsToDelete = _employeeAccessor.EmployeeId })
-            .MatchAsync(() => Ok(), error => error.MapToActionResult());
+        await _mediator.Send(new DeletePostCommand { PostId = postId });
+        return Ok();
     }
 }

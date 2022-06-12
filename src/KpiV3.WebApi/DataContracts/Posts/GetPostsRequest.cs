@@ -4,24 +4,33 @@ using System.ComponentModel.DataAnnotations;
 
 namespace KpiV3.WebApi.DataContracts.Posts;
 
-public class GetPostsRequest
+public record GetPostsRequest
 {
     [FromQuery]
-    [Range(1, int.MaxValue)]
-    public int PageNumber { get; set; }
+    public string? Title { get; init; }
 
+    [FromQuery]
+    public string? Content { get; init; }
+
+    [FromQuery]
     [Range(1, int.MaxValue)]
-    public int PageSize { get; set; }
+    public int PageNumber { get; init; }
+
+    [FromQuery]
+    [Range(1, int.MaxValue)]
+    public int PageSize { get; init; }
 
     public GetPostsQuery ToQuery()
     {
         return new GetPostsQuery
         {
+            Title = Title,
+            Content = Content,
             Pagination = new()
             {
                 PageNumber = PageNumber,
                 PageSize = PageSize,
-            }
+            },
         };
     }
 }

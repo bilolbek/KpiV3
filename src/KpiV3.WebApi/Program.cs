@@ -1,33 +1,28 @@
 using KpiV3.Domain;
-using KpiV3.Infrastructure;
-using KpiV3.WebApi.Authentication.Extensions;
+using KpiV3.Domain.Positions.DataContracts;
+using KpiV3.WebApi.Authentication.DataContracts;
 using KpiV3.WebApi.Extensions;
-using KpiV3.WebApi.HostedServices.Extensions;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning;
+using KpiV3.WebApi.Filters;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
+var environment = builder.Environment;
 
-services.AddHttpContextAccessor();
-services.AddControllers();
+services.AddControllers(options =>
+{
+    options.Filters.Add<ExceptionToResponseFilterAttribute>();
+}).AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
-services.AddAuthorization(options =>
-{
-    options.AddPolicy("RootOnly",
-        policy => policy.RequireClaim("posType", "Root"));
-});
-
-services
-    .AddDomainServices()
-    .AddAdapters(configuration, builder.Environment)
-    .AddMediatR(DomainAssembly.Instance, InfrastructureAssembly.Instance)
-    .AddJwt(configuration)
-    .AddHostedServices(configuration);
+services.AddKpiV3Services(configuration, environment);
 
 var app = builder.Build();
 
@@ -39,12 +34,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
-
-
-public partial class Program
-{
-}

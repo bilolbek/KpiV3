@@ -7,9 +7,9 @@ public class AllowSpecialtyChangeRequest
     public Guid EmployeeId { get; set; }
     public Guid PeriodId { get; set; }
 
-    public AllowSpecialityChangeCommand ToCommand()
+    public AllowSpecialtyChangeCommand ToCommand()
     {
-        return new AllowSpecialityChangeCommand
+        return new AllowSpecialtyChangeCommand
         {
             EmployeeId = EmployeeId,
             PeriodId = PeriodId

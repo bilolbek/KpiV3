@@ -1,95 +1,85 @@
-﻿using KpiV3.Domain.Common;
-using KpiV3.Domain.Files.Ports;
-using KpiV3.Domain.PeriodParts.Ports;
-using KpiV3.Domain.Requirements.Ports;
-using KpiV3.Domain.SpecialtyChoices.Ports;
+﻿using KpiV3.Domain.Comments.DataContracts;
+using KpiV3.Domain.Files.Services;
 using KpiV3.Domain.Submissions.DataContracts;
-using KpiV3.Domain.Submissions.Repositories;
 using MediatR;
 
 namespace KpiV3.Domain.Submissions.Commands;
 
-public record CreateSubmissionCommand : IRequest<Result<Submission, IError>>
+public record CreateSubmissionCommand : IRequest<Submission>
 {
-    public Guid EmployeeId { get; set; }
-    public Guid RequirementId { get; set; }
-    public Guid FileId { get; set; }
-    public string? Note { get; set; }
+    public List<Guid> FileIds { get; init; } = default!;
+    public Guid RequirementId { get; init; }
+    public Guid EmployeeId { get; init; }
 }
 
-public class CreateSubmissionCommandHandler : IRequestHandler<CreateSubmissionCommand, Result<Submission, IError>>
+public class CreateSubmissionCommandHandler : IRequestHandler<CreateSubmissionCommand, Submission>
 {
-    private readonly IFileMetadataRepository _fileMetadataRepository;
-    private readonly IRequirementRepository _requirementRepository;
-    private readonly ISubmissionRepository _submissionRepository;
-    private readonly ISpecialtyChoiceRepository _specialtyChoiceRepository;
-    private readonly IPeriodPartRepository _periodPartRepository;
+    private readonly KpiContext _db;
     private readonly IGuidProvider _guidProvider;
     private readonly IDateProvider _dateProvider;
+    private readonly FileOwnershipService _fileOwnershipService;
 
     public CreateSubmissionCommandHandler(
-        IFileMetadataRepository fileMetadataRepository,
-        IRequirementRepository requirementRepository,
-        ISubmissionRepository submissionRepository,
-        ISpecialtyChoiceRepository specialtyChoiceRepository,
-        IPeriodPartRepository periodPartRepository,
+        KpiContext db,
         IGuidProvider guidProvider,
-        IDateProvider dateProvider)
+        IDateProvider dateProvider,
+        FileOwnershipService fileOwnershipService)
     {
-        _fileMetadataRepository = fileMetadataRepository;
-        _requirementRepository = requirementRepository;
-        _submissionRepository = submissionRepository;
-        _specialtyChoiceRepository = specialtyChoiceRepository;
-        _periodPartRepository = periodPartRepository;
+        _db = db;
         _guidProvider = guidProvider;
         _dateProvider = dateProvider;
+        _fileOwnershipService = fileOwnershipService;
     }
 
-    public async Task<Result<Submission, IError>> Handle(CreateSubmissionCommand request, CancellationToken cancellationToken)
+    public async Task<Submission> Handle(CreateSubmissionCommand request, CancellationToken cancellationToken)
     {
-        return await EnsureEmployeeOwnsFileAsync(request.EmployeeId, request.FileId)
-            .BindAsync(() => EnsureEmployeeCanSubmitRequirementAsync(request.EmployeeId, request.RequirementId))
-            .InsertSuccessAsync(() => CreateSubmissionAsync(request));
-    }
+        await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
 
-    private async Task<Result<Submission, IError>> CreateSubmissionAsync(CreateSubmissionCommand request)
-    {
+        await PerformValidationsAsync(request, cancellationToken);
+
         var submission = new Submission
         {
             Id = _guidProvider.New(),
-
-            FileId = request.FileId,
-            Note = request.Note,
+            EmployeeId = request.EmployeeId,
             RequirementId = request.RequirementId,
-            UploaderId = request.EmployeeId,
-
-            SubmissionDate = _dateProvider.Now(),
+            SubmittedDate = _dateProvider.Now(),
+            Files = request.FileIds.Select(fileId => new SubmissionFile
+            {
+                FileId = fileId,
+            }).ToList(),
+            CommentBlock = new CommentBlock
+            {
+                Id = _guidProvider.New(),
+            },
         };
 
-        return await _submissionRepository
-            .InsertAsync(submission)
-            .InsertSuccessAsync(() => submission);
+        _db.Submissions.Add(submission);
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        await transaction.CommitAsync(cancellationToken);
+
+        return submission;
     }
 
-    private async Task<Result<IError>> EnsureEmployeeCanSubmitRequirementAsync(Guid employeeId, Guid requirementId)
+    private async Task PerformValidationsAsync(CreateSubmissionCommand request, CancellationToken cancellationToken)
     {
-        return await _requirementRepository
-            .FindByIdAsync(requirementId)
-            .BindAsync(requirement =>
-                _periodPartRepository
-                    .FindByIdAsync(requirement.PeriodPartId)
-                    .BindAsync(part => _specialtyChoiceRepository.FindByEmployeeIdAndPeriodIdAsync(employeeId, part.PeriodId))
-                    .BindAsync(specialty => requirement.SpecialtyId == specialty.SpecialtyId ?
-                        Result<IError>.Ok() :
-                        Result<IError>.Fail(new BusinessRuleViolation("You cannot add submission to this requirement because you do not have the required specialty."))));
+        await _fileOwnershipService.EnsureEmployeeOwnsFilesAsync(request.EmployeeId, request.FileIds, cancellationToken);
+        await EnsureEmployeeCanSubmitToRequirementAsync(request, cancellationToken);
     }
 
-    private async Task<Result<IError>> EnsureEmployeeOwnsFileAsync(Guid employeeId, Guid fileId)
+    private async Task EnsureEmployeeCanSubmitToRequirementAsync(
+        CreateSubmissionCommand request,
+        CancellationToken cancellationToken)
     {
-        return await _fileMetadataRepository
-            .FindByIdAsync(fileId)
-            .BindAsync(metadata => metadata.UploaderId == employeeId ?
-                Result<IError>.Ok() :
-                Result<IError>.Fail(new ForbidenAction("File does not belong to employee")));
+        if (!await _db.SpecialtyChoices.AnyAsync(sc =>
+            sc.EmployeeId == request.EmployeeId &&
+            sc.PeriodId == _db.Requirements
+                .Where(r => r.Id == request.RequirementId)
+                .Select(r => r.PeriodPart.PeriodId)
+                .First(), cancellationToken: cancellationToken))
+        {
+            throw new ForbiddenActionException("You cannot submit to this requirement");
+        }
     }
 }

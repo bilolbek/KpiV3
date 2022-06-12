@@ -1,5 +1,4 @@
-﻿using KpiV3.Domain.DataContracts.Models;
-using KpiV3.Domain.Positions.Queries;
+﻿using KpiV3.Domain.Positions.Queries;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -8,27 +7,26 @@ namespace KpiV3.WebApi.DataContracts.Positions;
 public class GetPositionsRequest
 {
     [FromQuery]
-    [Range(1, int.MaxValue)]
-    public int PageSize { get; set; }
-    
-    [FromQuery]
-    [Range(1, int.MaxValue)]
-    public int PageNumber { get; set; }
+    public string? Name { get; init; }
 
     [FromQuery]
-    public string? Name { get; set; }
+    [Range(1, int.MaxValue)]
+    public int PageNumber { get; init; }
+
+    [FromQuery]
+    [Range(1, int.MaxValue)]
+    public int PageSize { get; init; }
 
     public GetPositionsQuery ToQuery()
     {
         return new GetPositionsQuery
         {
-            Pagination = new Pagination
+            Name = Name,
+            Pagination = new()
             {
                 PageNumber = PageNumber,
-                PageSize = PageSize,
+                PageSize = PageSize
             },
-
-            Name = Name ?? ""
         };
     }
 }

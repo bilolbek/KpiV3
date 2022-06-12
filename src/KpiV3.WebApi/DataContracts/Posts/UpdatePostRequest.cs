@@ -6,19 +6,18 @@ namespace KpiV3.WebApi.DataContracts.Posts;
 public record UpdatePostRequest
 {
     [Required(AllowEmptyStrings = false)]
-    public string Title { get; set; } = default!;
+    public string Title { get; init; } = default!;
 
     [Required(AllowEmptyStrings = false)]
-    public string Content { get; set; } = default!;
+    public string Content { get; init; } = default!;
 
-    public UpdatePostCommand ToCommand(Guid postId, Guid idOfWhoWantsToEdit)
+    public UpdatePostCommand ToCommand(Guid postId)
     {
         return new UpdatePostCommand
         {
             PostId = postId,
             Title = Title,
             Content = Content,
-            IdOfWhoWantsToEdit = idOfWhoWantsToEdit,
         };
     }
 }

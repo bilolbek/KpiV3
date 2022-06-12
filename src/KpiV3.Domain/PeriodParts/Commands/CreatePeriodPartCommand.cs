@@ -1,52 +1,60 @@
-﻿using KpiV3.Domain.Common;
+﻿using KpiV3.Domain.Common.DataContracts;
 using KpiV3.Domain.PeriodParts.DataContracts;
-using KpiV3.Domain.PeriodParts.Ports;
-using KpiV3.Domain.Periods.Ports;
 using MediatR;
 
 namespace KpiV3.Domain.PeriodParts.Commands;
 
-public record CreatePeriodPartCommand : IRequest<Result<PeriodPart, IError>>
+public record CreatePeriodPartCommand : IRequest<PeriodPart>
 {
-    public string Name { get; set; } = default!;
-    public DateTimeOffset From { get; set; }
-    public DateTimeOffset To { get; set; }
-    public Guid PeriodId { get; set; }
+    public Guid PeriodId { get; init; }
+    public string Name { get; init; } = default!;
+    public DateRange Range { get; init; } = default!;
 }
 
-
-public class CreatePeriodPartCommandHandler : IRequestHandler<CreatePeriodPartCommand, Result<PeriodPart, IError>>
+public class CreatePeriodPartCommandHandler : IRequestHandler<CreatePeriodPartCommand, PeriodPart>
 {
-    private readonly IPeriodPartRepository _periodPartRepository;
-    private readonly IPeriodRepository _periodRepository;
+    private readonly KpiContext _db;
     private readonly IGuidProvider _guidProvider;
 
     public CreatePeriodPartCommandHandler(
-        IPeriodPartRepository periodPartRepository,
-        IPeriodRepository periodRepository,
+        KpiContext db,
         IGuidProvider guidProvider)
     {
-        _periodPartRepository = periodPartRepository;
-        _periodRepository = periodRepository;
+        _db = db;
         _guidProvider = guidProvider;
     }
 
-    public async Task<Result<PeriodPart, IError>> Handle(CreatePeriodPartCommand request, CancellationToken cancellationToken)
+    public async Task<PeriodPart> Handle(CreatePeriodPartCommand request, CancellationToken cancellationToken)
     {
+        await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
+
+        await EnsurePartIsInsidePeriodAsync(request, cancellationToken);
+
         var part = new PeriodPart
         {
             Id = _guidProvider.New(),
             Name = request.Name,
-            From = request.From,
-            To = request.To,
+            Range = request.Range,
             PeriodId = request.PeriodId,
         };
 
-        return await _periodRepository
-            .FindByIdAsync(request.PeriodId)
-            .BindAsync(period =>
-                Ensure.That(request.From >= period.From && request.To <= period.To, "Period part must lie within parent period's time range"))
-            .BindAsync(() => _periodPartRepository.InsertAsync(part))
-            .InsertSuccessAsync(() => part);
+        _db.PeriodParts.Add(part);
+
+        await _db.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+
+        return part;
+    }
+
+    private async Task EnsurePartIsInsidePeriodAsync(CreatePeriodPartCommand request, CancellationToken cancellationToken)
+    {
+        var period = await _db.Periods
+            .FindAsync(new object?[] { request.PeriodId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
+
+        if (!period.Includes(request.Range))
+        {
+            throw new InvalidInputException("Give range does not lie inside given period range");
+        }
     }
 }

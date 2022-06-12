@@ -9,7 +9,6 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["src/KpiV3.WebApi/KpiV3.WebApi.csproj", "src/KpiV3.WebApi/"]
 COPY ["src/KpiV3.Domain/KpiV3.Domain.csproj", "src/KpiV3.Domain/"]
-COPY ["src/KpiV3.Rop/KpiV3.Rop.csproj", "src/KpiV3.Rop/"]
 COPY ["src/KpiV3.Infrastructure/KpiV3.Infrastructure.csproj", "src/KpiV3.Infrastructure/"]
 RUN dotnet restore "src/KpiV3.WebApi/KpiV3.WebApi.csproj"
 COPY . .

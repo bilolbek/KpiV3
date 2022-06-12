@@ -6,12 +6,9 @@ namespace KpiV3.WebApi.DataContracts.Specialties;
 public record UpdateSpecialtyRequest
 {
     [Required(AllowEmptyStrings = false)]
-    public string Name { get; set; } = default!;
+    public string Name { get; init; } = default!;
 
-    [Required(AllowEmptyStrings = false)]
-    public string Description { get; set; } = default!;
-
-    public Guid PositionId { get; set; }
+    public string? Description { get; init; }
 
     public UpdateSpecialtyCommand ToCommand(Guid specialtyId)
     {
@@ -20,7 +17,6 @@ public record UpdateSpecialtyRequest
             SpecialtyId = specialtyId,
             Name = Name,
             Description = Description,
-            PositionId = PositionId,
         };
     }
 }

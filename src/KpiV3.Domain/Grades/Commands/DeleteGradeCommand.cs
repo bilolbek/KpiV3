@@ -1,25 +1,32 @@
-﻿using KpiV3.Domain.Grades.Ports;
-using MediatR;
+﻿using MediatR;
 
 namespace KpiV3.Domain.Grades.Commands;
 
-public record DeleteGradeCommand : IRequest<Result<IError>>
+public record DeleteGradeCommand : IRequest
 {
-    public Guid RequirementId { get; set; }
-    public Guid EmployeeId { get; set; }
+    public Guid RequirementId { get; init; }
+    public Guid EmployeeId { get; init; }
 }
 
-public class DeleteGradeCommandHandler : IRequestHandler<DeleteGradeCommand, Result<IError>>
+public class DeleteGradeCommandHandler : AsyncRequestHandler<DeleteGradeCommand>
 {
-    private readonly IGradeRepository _repository;
+    private readonly KpiContext _db;
 
-    public DeleteGradeCommandHandler(IGradeRepository repository)
+    public DeleteGradeCommandHandler(KpiContext db)
     {
-        _repository = repository;
+        _db = db;
     }
 
-    public async Task<Result<IError>> Handle(DeleteGradeCommand request, CancellationToken cancellationToken)
+    protected override async Task Handle(DeleteGradeCommand request, CancellationToken cancellationToken)
     {
-        return await _repository.DeleteAsync(request.EmployeeId, request.RequirementId);
+        var grade = await _db.Grades
+            .FirstOrDefaultAsync(g =>
+                g.RequirementId == request.RequirementId &&
+                g.EmployeeId == request.EmployeeId, cancellationToken)
+            .EnsureFoundAsync();
+
+        _db.Remove(grade);
+
+        await _db.SaveChangesAsync(cancellationToken);
     }
 }

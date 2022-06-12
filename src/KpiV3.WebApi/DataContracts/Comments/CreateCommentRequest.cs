@@ -11,7 +11,7 @@ public class CreateCommentRequest
     {
         return new CreateCommentCommand
         {
-            AuthorId = authorId,
+            EmployeeId = authorId,
             Content = Content,
             BlockId = BlockId,
         };

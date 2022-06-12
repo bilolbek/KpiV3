@@ -1,24 +1,29 @@
-﻿using KpiV3.Domain.Indicators.Ports;
-using MediatR;
+﻿using MediatR;
 
 namespace KpiV3.Domain.Indicators.Commands;
 
-public record DeleteIndicatorCommand : IRequest<Result<IError>>
+public record DeleteIndicatorCommand : IRequest
 {
-    public Guid IndicatorId { get; set; }
+    public Guid IndicatorId { get; init; }
 }
 
-public class DeleteIndicatorCommandHandler : IRequestHandler<DeleteIndicatorCommand, Result<IError>>
+public class DeleteIndicatorCommandHandler : AsyncRequestHandler<DeleteIndicatorCommand>
 {
-    private readonly IIndicatorRepository _repository;
+    private readonly KpiContext _db;
 
-    public DeleteIndicatorCommandHandler(IIndicatorRepository repository)
+    public DeleteIndicatorCommandHandler(KpiContext db)
     {
-        _repository = repository;
+        _db = db;
     }
 
-    public async Task<Result<IError>> Handle(DeleteIndicatorCommand request, CancellationToken cancellationToken)
+    protected override async Task Handle(DeleteIndicatorCommand request, CancellationToken cancellationToken)
     {
-        return await _repository.DeleteAsync(request.IndicatorId);
+        var indicator = await _db.Indicators
+            .FindAsync(new object?[] { request.IndicatorId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
+
+        _db.Indicators.Remove(indicator);
+
+        await _db.SaveChangesAsync(cancellationToken);
     }
 }

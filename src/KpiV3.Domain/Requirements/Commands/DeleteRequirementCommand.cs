@@ -1,24 +1,30 @@
-﻿using KpiV3.Domain.Requirements.Ports;
-using MediatR;
+﻿using MediatR;
 
 namespace KpiV3.Domain.Requirements.Commands;
 
-public record DeleteRequirementCommand : IRequest<Result<IError>>
+public record DeleteRequirementCommand : IRequest
 {
-    public Guid RequirementId { get; set; }
+    public Guid RequirementId { get; init; }
 }
 
-public class DeleteRequirementCommandHandler : IRequestHandler<DeleteRequirementCommand, Result<IError>>
+public class DeleteRequirementCommandHandler : AsyncRequestHandler<DeleteRequirementCommand>
 {
-    private readonly IRequirementRepository _repository;
+    private readonly KpiContext _db;
 
-    public DeleteRequirementCommandHandler(IRequirementRepository repository)
+    public DeleteRequirementCommandHandler(KpiContext db)
     {
-        _repository = repository;
+        _db = db;
     }
 
-    public async Task<Result<IError>> Handle(DeleteRequirementCommand request, CancellationToken cancellationToken)
+    protected override async Task Handle(DeleteRequirementCommand request, CancellationToken cancellationToken)
     {
-        return await _repository.DeleteAsync(request.RequirementId);
+        var requirement = await _db
+            .Requirements
+            .FindAsync(new object?[] { request.RequirementId }, cancellationToken: cancellationToken)
+            .EnsureFoundAsync();
+
+        _db.Requirements.Remove(requirement);
+
+        await _db.SaveChangesAsync(cancellationToken);
     }
 }
