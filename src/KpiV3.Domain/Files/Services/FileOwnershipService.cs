@@ -14,12 +14,11 @@ public class FileOwnershipService
         ICollection<Guid> fileIds,
         CancellationToken cancellationToken = default)
     {
-        var ownedCount = await _db.Files
-            .CountAsync(f =>
-                f.OwnerId == employeeId &&
-                fileIds.Contains(f.Id), cancellationToken);
+        var files = await _db.Files
+            .Where(f => fileIds.Contains(f.Id))
+            .ToListAsync(cancellationToken);
 
-        if (fileIds.Count != ownedCount)
+        if (!files.All(f => f.OwnerId == employeeId))
         {
             throw new ForbiddenActionException("One or more of the requeset files does not belong to you");
         }

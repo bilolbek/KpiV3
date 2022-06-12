@@ -50,6 +50,7 @@ public class CreateSubmissionCommandHandler : IRequestHandler<CreateSubmissionCo
             CommentBlock = new CommentBlock
             {
                 Id = _guidProvider.New(),
+                Type = CommentBlockType.Submission,
             },
         };
 
@@ -72,12 +73,18 @@ public class CreateSubmissionCommandHandler : IRequestHandler<CreateSubmissionCo
         CreateSubmissionCommand request,
         CancellationToken cancellationToken)
     {
-        if (!await _db.SpecialtyChoices.AnyAsync(sc =>
-            sc.EmployeeId == request.EmployeeId &&
-            sc.PeriodId == _db.Requirements
-                .Where(r => r.Id == request.RequirementId)
-                .Select(r => r.PeriodPart.PeriodId)
-                .First(), cancellationToken: cancellationToken))
+        var requirement = await _db.Requirements
+            .Include(r => r.PeriodPart)
+            .FirstOrDefaultAsync(r => r.Id == request.RequirementId, cancellationToken)
+            .EnsureFoundAsync();
+
+        var specialtyOfEmployee = await _db.SpecialtyChoices
+            .FirstOrDefaultAsync(sc =>
+                sc.EmployeeId == request.EmployeeId &&
+                sc.PeriodId == requirement.PeriodPart.PeriodId, cancellationToken);
+
+
+        if (specialtyOfEmployee is null || specialtyOfEmployee.SpecialtyId != requirement.SpecialtyId)
         {
             throw new ForbiddenActionException("You cannot submit to this requirement");
         }

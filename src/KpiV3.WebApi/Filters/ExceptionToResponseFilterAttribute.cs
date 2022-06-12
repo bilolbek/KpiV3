@@ -31,7 +31,13 @@ public class ExceptionToResponseFilterAttribute : ExceptionFilterAttribute
             BusinessLogicException => new BadRequestObjectResult(new ErrorDto(context.Exception.Message)),
             InvalidInputException => new BadRequestObjectResult(new ErrorDto(context.Exception.Message)),
             UnauthorizedAccessException => new UnauthorizedObjectResult(new ErrorDto(context.Exception.Message)),
-            ForbiddenActionException => new ForbidResult(),
+            ForbiddenActionException => new ObjectResult(new
+            {
+                Message = context.Exception.Message,
+            })
+            {
+                StatusCode = (int)HttpStatusCode.Forbidden,
+            },
             EntityNotFoundException => new NotFoundResult(),
 
             _ => new ObjectResult(new
