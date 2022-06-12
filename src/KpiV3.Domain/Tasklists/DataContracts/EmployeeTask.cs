@@ -12,4 +12,6 @@ public class EmployeeTask
 
     public double Weight { get; init; }
     public double? Grade { get; init; }
+
+    public bool HasSubmission { get; init; }
 }
