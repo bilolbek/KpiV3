@@ -22,7 +22,7 @@ public class PeriodController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(Page<PeriodDto>))]
-    public async Task<IActionResult> GetAsync(GetPeriodsRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAsync([FromQuery] GetPeriodsRequest request, CancellationToken cancellationToken)
     {
         var periods = await _mediator.Send(request.ToQuery(), cancellationToken);
 
