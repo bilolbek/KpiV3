@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KpiV3.WebApi.Controllers;
 
-[Authorize(Policy = "RootOnly")]
+
 [ApiController]
 [Route("api/[controller]")]
 public class PeriodPartController : ControllerBase
@@ -39,6 +39,7 @@ public class PeriodPartController : ControllerBase
         return Ok(new PeriodPartDto(part));
     }
 
+    [Authorize(Policy = "RootOnly")]
     [HttpPost]
     [ProducesResponseType(200, Type = typeof(PeriodPartDto))]
     [ProducesResponseType(400)]
@@ -49,6 +50,7 @@ public class PeriodPartController : ControllerBase
         return Ok(new PeriodPartDto(part));
     }
 
+    [Authorize(Policy = "RootOnly")]
     [HttpPut("{partId:guid}")]
     [ProducesResponseType(200, Type = typeof(PeriodPartDto))]
     [ProducesResponseType(400)]
@@ -60,6 +62,7 @@ public class PeriodPartController : ControllerBase
         return Ok(new PeriodPartDto(part));
     }
 
+    [Authorize(Policy = "RootOnly")]
     [HttpDelete("{partId:guid}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
