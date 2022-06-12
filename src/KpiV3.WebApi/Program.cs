@@ -11,6 +11,17 @@ var services = builder.Services;
 var configuration = builder.Configuration;
 var environment = builder.Environment;
 
+services.AddCors(options =>
+{
+    options.AddPolicy("Default", builder =>
+    {
+        builder
+            .WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 services.AddControllers(options =>
 {
     options.Filters.Add<ExceptionToResponseFilterAttribute>();
@@ -32,6 +43,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("Default");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
