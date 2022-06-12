@@ -1,5 +1,6 @@
 ﻿using KpiV3.Domain.Common.DataContracts;
 using KpiV3.Domain.Employees.Commands;
+using KpiV3.Domain.Employees.Queries;
 using KpiV3.WebApi.DataContracts.Common;
 using KpiV3.WebApi.DataContracts.Employees;
 using KpiV3.WebApi.Misc;
@@ -19,6 +20,16 @@ public class EmployeeController : ControllerBase
     public EmployeeController(IMediator mediator)
     {
         _mediator = mediator;
+    }
+
+    [HttpGet("{employeeId:guid}")]
+    [ProducesResponseType(200, Type = typeof(ProfileDto))]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> GetAsync(Guid employeeId)
+    {
+        var profile = await _mediator.Send(new GetProfileQuery { EmployeeId = employeeId });
+
+        return Ok(new ProfileDto(profile));
     }
 
     [HttpGet]
