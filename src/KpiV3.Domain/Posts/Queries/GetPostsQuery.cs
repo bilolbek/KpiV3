@@ -29,7 +29,12 @@ public class GetPostsQueryHandler : IRequestHandler<GetPostsQuery, Page<PostWith
             {
                 Id = p.AuthorId,
                 Email = p.Author.Email,
-                Name = p.Author.Name,
+                Name = new Name
+                {
+                    FirstName = p.Author.Name.FirstName,
+                    LastName = p.Author.Name.LastName,
+                    MiddleName = p.Author.Name.MiddleName,
+                },
                 AvatarId = p.Author.AvatarId,
             },
             Title = p.Title,

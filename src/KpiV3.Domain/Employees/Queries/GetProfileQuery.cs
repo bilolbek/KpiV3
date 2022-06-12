@@ -25,7 +25,12 @@ public class GetProfileQueryHandler : IRequestHandler<GetProfileQuery, Profile>
            {
                Id = e.Id,
                Email = e.Email,
-               Name = e.Name,
+               Name = new()
+               {
+                   FirstName = e.Name.FirstName,
+                   LastName = e.Name.LastName,
+                   MiddleName = e.Name.MiddleName,
+               },
                AvatarId = e.AvatarId,
            })
            .FirstOrDefaultAsync(cancellationToken)

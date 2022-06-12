@@ -58,7 +58,12 @@ public class CreatePostCommandHandler : IRequestHandler<CreatePostCommand, PostW
             {
                 Id = author.Id,
                 Email = author.Email,
-                Name = author.Name,
+                Name = new()
+                {
+                    FirstName = author.Name.FirstName,
+                    LastName = author.Name.LastName,
+                    MiddleName = author.Name.MiddleName,
+                },
                 AvatarId = author.AvatarId,
             },
             CommentBlockId = post.CommentBlockId,

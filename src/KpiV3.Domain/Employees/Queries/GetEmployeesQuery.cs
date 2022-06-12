@@ -63,7 +63,12 @@ public class GetEmployeesQueryHandler : IRequestHandler<GetEmployeesQuery, Page<
             {
                 Id = e.Id,
                 Email = e.Email,
-                Name = e.Name,
+                Name = new()
+                {
+                    FirstName = e.Name.FirstName,
+                    LastName = e.Name.LastName,
+                    MiddleName = e.Name.MiddleName,
+                },
                 AvatarId = e.AvatarId,
             })
             .ToPageAsync(request.Pagination, cancellationToken);

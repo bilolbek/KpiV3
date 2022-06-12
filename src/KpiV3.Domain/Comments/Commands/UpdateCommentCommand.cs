@@ -51,7 +51,12 @@ public class UpdateCommentCommandHandler : IRequestHandler<UpdateCommentCommand,
                 Id = author.Id,
                 AvatarId = author.AvatarId,
                 Email = author.Email,
-                Name = author.Name,
+                Name = new()
+                {
+                    FirstName = author.Name.FirstName,
+                    LastName = author.Name.LastName,
+                    MiddleName = author.Name.MiddleName,
+                },
             },
             CommentBlockId = comment.CommentBlockId,
             Content = comment.Content,

@@ -29,7 +29,12 @@ public class GetCommentsQueryHandler : IRequestHandler<GetCommentsQuery, Page<Co
                 {
                     Id = c.AuthorId,
                     Email = c.Author.Email,
-                    Name = c.Author.Name,
+                    Name = new()
+                    {
+                        FirstName = c.Author.Name.FirstName,
+                        LastName = c.Author.Name.LastName,
+                        MiddleName = c.Author.Name.MiddleName,
+                    },
                     AvatarId = c.Author.AvatarId,
                 },
                 Content = c.Content,

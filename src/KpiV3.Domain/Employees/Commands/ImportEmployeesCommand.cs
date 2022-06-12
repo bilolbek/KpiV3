@@ -50,7 +50,12 @@ public class ImportedEmployeesCommandHandler : AsyncRequestHandler<ImportEmploye
             {
                 Id = x.id,
                 Email = x.employee.Email,
-                Name = x.employee.Name,
+                Name = new()
+                {
+                    FirstName = x.employee.Name.FirstName,
+                    LastName = x.employee.Name.LastName,
+                    MiddleName = x.employee.Name.MiddleName,
+                },
                 PasswordHash = _passwordHasher.Hash(passwords[x.id] = _passwordGenerator.Generate()),
                 PositionId = positions[x.employee.Position],
                 RegisteredDate = _dateProvider.Now(),
