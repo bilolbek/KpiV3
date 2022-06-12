@@ -29,6 +29,7 @@ public class FileService
             Name = request.Name,
             ContentType = request.ContentType,
             Length = request.Length,
+            OwnerId = request.OwnerId,
         };
 
         _db.Files.Add(metadata);

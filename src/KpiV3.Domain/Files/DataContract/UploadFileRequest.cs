@@ -6,4 +6,5 @@ public record UploadFileRequest
     public string ContentType { get; init; } = default!;
     public long Length { get; init; }
     public Stream Content { get; init; } = default!;
+    public Guid OwnerId { get; init; }
 }

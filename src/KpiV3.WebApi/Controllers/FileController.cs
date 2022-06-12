@@ -32,7 +32,7 @@ public class FileController : ControllerBase
             ContentType = file.ContentType,
             Length = file.Length,
             Name = file.Name,
-            
+            OwnerId = _employeeAccessor.EmployeeId,
         });
 
         return Ok(response);
