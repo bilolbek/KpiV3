@@ -1,5 +1,6 @@
 ﻿using KpiV3.Domain.Files.DataContract;
 using KpiV3.Domain.Files.Services;
+using KpiV3.WebApi.Authentication.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +12,14 @@ namespace KpiV3.WebApi.Controllers;
 public class FileController : ControllerBase
 {
     private readonly FileService _fileService;
+    private readonly IEmployeeAccessor _employeeAccessor;
 
-    public FileController(FileService fileService)
+    public FileController(
+        FileService fileService, 
+        IEmployeeAccessor employeeAccessor)
     {
         _fileService = fileService;
+        _employeeAccessor = employeeAccessor;
     }
 
     [HttpPost]
@@ -27,6 +32,7 @@ public class FileController : ControllerBase
             ContentType = file.ContentType,
             Length = file.Length,
             Name = file.Name,
+            
         });
 
         return Ok(response);

@@ -48,6 +48,8 @@ services:
     ports:
       - 9000:9000
       - 9001:9001
+    volumes:
+      - minio.volume:/data
 
   database:
     image: postgres
@@ -67,3 +69,4 @@ services:
 
 volumes:
   database.volume:
+  minio.volume:

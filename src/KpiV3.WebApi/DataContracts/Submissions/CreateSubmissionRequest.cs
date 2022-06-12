@@ -5,10 +5,10 @@ namespace KpiV3.WebApi.DataContracts.Submissions;
 
 public record CreateSubmissionRequest
 {
-    public Guid RequirementId { get; init; }
+    public Guid RequirementId { get; set; }
 
     [Required]
-    public List<Guid> FileIds { get; init; } = default!;
+    public List<Guid> FileIds { get; set; } = default!;
 
     public CreateSubmissionCommand ToCommand(Guid employeeId)
     {

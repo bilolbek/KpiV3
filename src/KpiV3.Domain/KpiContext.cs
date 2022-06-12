@@ -45,16 +45,21 @@ public class KpiContext : DbContext
 
             t.Property(e => e.PasswordHash).HasMaxLength(512).IsRequired();
 
+            t
+                .HasMany(e => e.UploadedFiles)
+                .WithOne(e => e.Owner)
+                .HasForeignKey(f => f.OwnerId);
+
+            t
+                .HasOne(t => t.Avatar)
+                .WithOne()
+                .HasForeignKey<Employee>(f => f.AvatarId);
+
             t.OwnsOne(e => e.Name, name =>
             {
                 name.Property(n => n.FirstName).IsRequired();
                 name.Property(n => n.LastName).IsRequired();
             });
-
-            t
-                .HasOne(e => e.Avatar)
-                .WithOne(f => f.Owner)
-                .HasForeignKey<FileMetadata>(e => e.OwnerId);
         });
 
         modelBuilder.Entity<Position>(t =>
@@ -71,11 +76,6 @@ public class KpiContext : DbContext
 
         modelBuilder.Entity<FileMetadata>(t =>
         {
-            t
-                .HasOne(f => f.Owner)
-                .WithOne(e => e.Avatar)
-                .HasForeignKey<Employee>(e => e.AvatarId);
-
             t.Property(f => f.Name).HasMaxLength(256).IsRequired();
 
             t.Property(f => f.ContentType).HasMaxLength(128).IsRequired();

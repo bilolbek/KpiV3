@@ -28,4 +28,6 @@ public class Employee
     public ICollection<SpecialtyChoice> SpecialtyChoices { get; set; } = default!;
     
     public ICollection<Grade> Grades { get; set; } = default!;
+
+    public ICollection<FileMetadata> UploadedFiles { get; set; } = default!;
 }
