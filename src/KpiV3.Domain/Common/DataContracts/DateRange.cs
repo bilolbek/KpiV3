@@ -7,11 +7,11 @@ public record DateRange
 
     public bool Includes(DateTimeOffset dateTime)
     {
-        return From >= dateTime && dateTime <= To;
+        return dateTime >= From && dateTime <= To;
     }
 
     public bool Includes(DateRange otherRange)
     {
-        return From >= otherRange.From && otherRange.To <= To;
+        return Includes(otherRange.From) && Includes(otherRange.From);
     }
 }
