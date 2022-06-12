@@ -31,6 +31,8 @@ public class CreateRequirementCommandHandler : IRequestHandler<CreateRequirement
 
         await EnsureTotalWeightOfRequirementsDoesNotExceed100Async(request, cancellationToken);
 
+        await transaction.CommitAsync(cancellationToken);
+
         return await CreateRequirementAsync(request, cancellationToken);
     }
 
