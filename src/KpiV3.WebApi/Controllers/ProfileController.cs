@@ -47,6 +47,16 @@ public class ProfileController : ControllerBase
         return Ok();
     }
 
+    [HttpGet("{employeeId:guid}")]
+    [ProducesResponseType(200, Type = typeof(ProfileDto))]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> GetAsync(Guid employeeId)
+    {
+        var profile = await _mediator.Send(new GetProfileQuery { EmployeeId = employeeId });
+
+        return Ok(new ProfileDto(profile));
+    }
+
     [HttpPost("change-password")]
     [ProducesResponseType(200)]
     [ProducesResponseType(401)]

@@ -22,16 +22,6 @@ public class EmployeeController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("{employeeId:guid}")]
-    [ProducesResponseType(200, Type = typeof(ProfileDto))]
-    [ProducesResponseType(404)]
-    public async Task<IActionResult> GetAsync(Guid employeeId)
-    {
-        var profile = await _mediator.Send(new GetProfileQuery { EmployeeId = employeeId });
-
-        return Ok(new ProfileDto(profile));
-    }
-
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(Page<ProfileDto>))]
     public async Task<IActionResult> GetAsync([FromQuery] GetEmployeesRequest request)
