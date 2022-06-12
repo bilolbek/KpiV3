@@ -22,6 +22,7 @@ public class GetSubmissionQueryHandler : IRequestHandler<GetSubmissionQuery, Sub
     public async Task<Submission> Handle(GetSubmissionQuery request, CancellationToken cancellationToken)
     {
         return  await _db.Submissions
+            .Include(s => s.Files)
             .FirstOrDefaultAsync(s =>
                 s.RequirementId == request.RequirementId &&
                 s.EmployeeId == request.EmployeeId, cancellationToken)
