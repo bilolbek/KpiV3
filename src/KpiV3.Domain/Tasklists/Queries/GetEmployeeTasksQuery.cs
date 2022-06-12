@@ -31,7 +31,7 @@ public class GetEmployeeTasksQueryHandler : IRequestHandler<GetEmployeeTasksQuer
         }
 
         return await _db.Requirements
-            .Where(r => r.PeriodPart.PeriodId == request.PeriodId)
+            .Where(r => r.PeriodPart.PeriodId == request.PeriodId && r.SpecialtyId == specialtyOfEmployee.SpecialtyId)
             .Select(r => new EmployeeTask
             {
                 RequirementId = r.Id,
