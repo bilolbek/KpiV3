@@ -1,4 +1,5 @@
 ﻿using KpiV3.Domain.Requirements.Commands;
+using System.ComponentModel.DataAnnotations;
 
 namespace KpiV3.WebApi.DataContracts.Requirements;
 
@@ -9,6 +10,9 @@ public record CreateRequirementRequest
     public Guid IndicatorId { get; init; }
     public string? Note { get; init; }
 
+    [Range(0, 100)]
+    public double Weight { get; init; }
+
     public CreateRequirementCommand ToCommand()
     {
         return new CreateRequirementCommand
@@ -17,6 +21,7 @@ public record CreateRequirementRequest
             PeriodPartId = PeriodPartId,
             IndicatorId = IndicatorId,
             Note = Note,
+            Weight = Weight,
         };
     }
 }

@@ -9,6 +9,7 @@ public record CreateRequirementCommand : IRequest<Requirement>
     public Guid PeriodPartId { get; init; }
     public Guid IndicatorId { get; init; }
     public string? Note { get; init; }
+    public double Weight { get; init; }
 }
 
 public class CreateRequirementCommandHandler : IRequestHandler<CreateRequirementCommand, Requirement>
@@ -42,6 +43,7 @@ public class CreateRequirementCommandHandler : IRequestHandler<CreateRequirement
             PeriodPartId = request.PeriodPartId,
             SpecialtyId = request.SpecialtyId,
             Note = request.Note,
+            Weight = request.Weight,
         };
 
         _db.Requirements.Add(requirement);
