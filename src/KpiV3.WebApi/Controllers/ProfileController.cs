@@ -68,6 +68,16 @@ public class ProfileController : ControllerBase
         return Ok(new SpecialtyDto(specialty));
     }
 
+    [HttpGet("can-choose-specialty/{periodId:guid}")]
+    public async Task<IActionResult> CanChooseSpecialtyAsync(Guid periodId)
+    {
+        return Ok(await _mediator.Send(new CanChooseSpecialtyQuery
+        {
+            PeriodId = periodId,
+            EmployeeId = _employeeAccessor.EmployeeId
+        }));
+    }
+
     [HttpPost("specialty")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
