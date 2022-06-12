@@ -9,7 +9,8 @@ public record PeriodDto
     {
         Id = period.Id;
         Name = period.Name;
-
+        From = period.Range.From;
+        To = period.Range.To;
     }
 
     public Guid Id { get; init; }
