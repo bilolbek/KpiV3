@@ -16,6 +16,7 @@ using KpiV3.Infrastructure.Files;
 using KpiV3.WebApi.Authentication.DataContracts;
 using KpiV3.WebApi.Authentication.Services;
 using KpiV3.WebApi.HostedServices;
+using KpiV3.WebApi.Misc;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -49,7 +50,14 @@ public static class DependencyInjectionExtensions
             .AddS3FileStorage(configuration)
             .AddHostedServices(configuration);
 
-        return services.AddDomainServices(configuration);
+        return services
+            .AddDomainServices(configuration)
+            .AddWebServices();
+    }
+
+    private static IServiceCollection AddWebServices(this IServiceCollection services)
+    {
+        return services.AddTransient<PdfGenerator>();
     }
 
     private static IServiceCollection AddHostedServices(

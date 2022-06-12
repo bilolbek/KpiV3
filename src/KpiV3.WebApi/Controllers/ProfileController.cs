@@ -1,5 +1,6 @@
 ﻿using KpiV3.Domain.Employees.Queries;
 using KpiV3.Domain.SpecialtyChoices.Queries;
+using KpiV3.Domain.Tasklists.Queries;
 using KpiV3.WebApi.Authentication.Services;
 using KpiV3.WebApi.DataContracts.Common;
 using KpiV3.WebApi.DataContracts.Profiles;
@@ -97,5 +98,15 @@ public class ProfileController : ControllerBase
         await _mediator.Send(request.ToCommand(_employeeAccessor.EmployeeId));
 
         return Ok();
+    }
+
+    [HttpGet("tasks/{periodId}")]
+    public async Task<IActionResult> GetTasksAsync(Guid periodId)
+    {
+        return Ok(await _mediator.Send(new GetEmployeeTasksQuery
+        {
+            EmployeeId = _employeeAccessor.EmployeeId,
+            PeriodId = periodId
+        }));
     }
 }
