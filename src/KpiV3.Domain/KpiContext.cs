@@ -118,6 +118,7 @@ public class KpiContext : DbContext
 
         modelBuilder.Entity<Submission>(t =>
         {
+            t.HasIndex(s => new { s.RequirementId, s.EmployeeId }).IsUnique();
         });
 
         modelBuilder.Entity<SubmissionFile>(t =>
