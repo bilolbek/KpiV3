@@ -16,7 +16,7 @@ public class GradeValidationService
         CancellationToken cancellationToken = default)
     {
         var requirement = await _db.Requirements
-            .FindAsync(new object?[] { grade.Value }, cancellationToken)
+            .FindAsync(new object?[] { grade.RequirementId }, cancellationToken)
             .EnsureFoundAsync();
 
         if (grade.Value > requirement.Weight)
